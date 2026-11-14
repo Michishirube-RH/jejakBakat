@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Check, Home, Lock, Send, ListChecks, NotebookPen, ShieldCheck } from 'lucide-react'
 import { mentorReply, type MentorIntent } from '../ai/mentor'
 import { MentorSay } from '../components/Companion'
-import { Page } from '../components/ui'
+import { FallbackLabel, Page } from '../components/ui'
 import { cx, type AppState, type ChatMsg } from '../lib'
 
 type P = { state: AppState; patch: (p: Partial<AppState>) => void; reset: () => void }
@@ -71,7 +71,9 @@ export function Workspace({ state, patch }: P) {
       userNotes: state.notes[step.id],
       recentChats: [...msgs, outgoing].slice(-10),
     })
-    setChats((c) => ({ ...c, [id]: [...(c[id] ?? []), { from: 'mentor', text: reply }] }))
+    setChats((c) => ({ ...c, [id]: [...(c[id] ?? []), { from: 'mentor', text: reply.text }] }))
+    // Penanda bila balasan terakhir berasal dari cadangan lokal, bukan dari LLM.
+    patch({ fallback: { ...state.fallback, mentorReply: reply.usedFallback ? id : '' } })
     setTyping(false)
   }
   const submit = () => {
@@ -188,6 +190,7 @@ export function Workspace({ state, patch }: P) {
                   </span>
                 </div>
               )}
+              <FallbackLabel show={state.fallback.mentorReply === ck(step.id)} />
             </div>
           </div>
           <div className="shrink-0 border-t border-line p-4">

@@ -13,6 +13,12 @@ export interface MentorContext {
   recentChats?: Array<{ from: 'mentor' | 'user'; text: string }>
 }
 
+export interface MentorReply {
+  text: string
+  /** True bila balasan berasal dari cadangan lokal, bukan dari LLM. */
+  usedFallback: boolean
+}
+
 /**
  * Memanggil LLM untuk balasan mentor Jeje.
  * Mengirimkan misi, langkah aktif, catatan pengguna, 10 pesan chat terakhir, dan pesan pengguna.
@@ -23,7 +29,7 @@ export async function mentorReply(
   message: string,
   key: string,
   context?: MentorContext
-): Promise<string> {
+): Promise<MentorReply> {
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), 10000)
@@ -64,7 +70,7 @@ export async function mentorReply(
     if (res.ok) {
       const data = await res.json()
       if (data?.result && typeof data.result === 'string' && data.result.trim()) {
-        return data.result.trim()
+        return { text: data.result.trim(), usedFallback: false }
       }
     }
   } catch (err) {
@@ -79,22 +85,22 @@ export async function mentorReply(
   const stepGoal = context?.step?.goal || 'tujuan langkah ini'
 
   if (q.includes('aku siapa') || q.includes('siapa aku')) {
-    return `Kamu adalah peserta penjelajah bakat di JejakBakat AI yang sedang belajar sambil membantu ${biz}.`
+    return { text: `Kamu adalah peserta penjelajah bakat di JejakBakat AI yang sedang belajar sambil membantu ${biz}.`, usedFallback: true }
   }
   if (q.includes('kamu siapa') || q.includes('siapa kamu')) {
-    return `Aku Jeje, mentor AI-mu di JejakBakat AI! Aku siap mendampingimu langkah demi langkah menyelesaikan misi ${biz}.`
+    return { text: `Aku Jeje, mentor AI-mu di JejakBakat AI! Aku siap mendampingimu langkah demi langkah menyelesaikan misi ${biz}.`, usedFallback: true }
   }
   if (q.includes('maksud') || q.includes('tujuan') || q.includes('apa yang harus') || q.includes('ngapain') || q.includes('gimana')) {
-    return `Di langkah "${stepTitle}", tujuan kita adalah ${stepGoal.toLowerCase()}. Coba fokus mulai dari tugas pertama dulu ya!`
+    return { text: `Di langkah "${stepTitle}", tujuan kita adalah ${stepGoal.toLowerCase()}. Coba fokus mulai dari tugas pertama dulu ya!`, usedFallback: true }
   }
   if (q === 'oy' || q === 'halo' || q === 'hai' || q === 'tes' || q === 'p') {
-    return `Halo! Yuk kita fokus lagi bantu ${biz} di langkah "${stepTitle}". Ada bagian tugas yang membuatmu ragu?`
+    return { text: `Halo! Yuk kita fokus lagi bantu ${biz} di langkah "${stepTitle}". Ada bagian tugas yang membuatmu ragu?`, usedFallback: true }
   }
 
   const list = mentorReplies[intent]
   const k = key + intent
   const i = (counters[k] = (counters[k] ?? -1) + 1)
-  return list[i % list.length]
+  return { text: list[i % list.length], usedFallback: true }
 }
 
 /** Hasil siap tampil untuk Impact Report. */
@@ -109,6 +115,8 @@ export interface ImpactReportData {
   ownerPermissionGranted: boolean
   strengthenedPotential: string
   nextSteps: string[]
+  /** True bila ringkasan berasal dari template lokal, bukan dari LLM. */
+  usedFallback: boolean
 }
 
 export interface ReportInput {
@@ -133,6 +141,7 @@ export async function buildImpactReport({
   let summary = userNotes.length
     ? `${mission.target} Catatan kerja: ${userNotes.join(' ')}`
     : `Menyelesaikan misi untuk ${mission.usaha} dengan target: ${mission.target}.`
+  let usedFallback = true
 
   try {
     const controller = new AbortController()
@@ -164,6 +173,7 @@ export async function buildImpactReport({
       const data = await res.json()
       if (data?.result && typeof data.result === 'string' && data.result.trim()) {
         summary = data.result.trim()
+        usedFallback = false
       }
     }
   } catch (err) {
@@ -181,5 +191,6 @@ export async function buildImpactReport({
     ownerPermissionGranted: mission.ownerPermissionGranted,
     strengthenedPotential: potentialName || '',
     nextSteps: mission.roadmap.map((s) => s.title),
+    usedFallback,
   }
 }

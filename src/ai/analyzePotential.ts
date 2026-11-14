@@ -4,13 +4,21 @@ import type { Answers, AnalysisResult, Evidence, PotentialResult } from './types
 const SIGNALS = Object.keys(signalMap) as Signal[]
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
+export interface AnalysisOutcome extends AnalysisResult {
+  /**
+   * True bila potensi berasal dari aturan lokal, bukan dari LLM.
+   * Radar selalu dihitung lokal, jadi flag ini khusus untuk kartu potensi.
+   */
+  usedFallback: boolean
+}
+
 /**
  * Menganalisis potensi pengguna.
  * Menghitung skor sinyal secara lokal (untuk radar dan cadangan), lalu mencoba
  * memanggil LLM melalui endpoint server /api/ai. Bila panggilan gagal atau timeout 15 detik,
  * otomatis menggunakan hasil lokal tanpa memunculkan error ke pengguna.
  */
-export async function analyzePotential(answers: Answers): Promise<AnalysisResult> {
+export async function analyzePotential(answers: Answers): Promise<AnalysisOutcome> {
   // 1. Perhitungan Sinyal & Skor Lokal (Cadangan & Radar)
   const signalScores = Object.fromEntries(SIGNALS.map((s) => [s, 0])) as Record<Signal, number>
   const evidenceBySignal: Record<Signal, Evidence[]> = Object.fromEntries(SIGNALS.map((s) => [s, []])) as never
@@ -148,6 +156,7 @@ export async function analyzePotential(answers: Answers): Promise<AnalysisResult
         return {
           signalScores,
           potentials: validated,
+          usedFallback: false,
         }
       }
     }
@@ -157,5 +166,5 @@ export async function analyzePotential(answers: Answers): Promise<AnalysisResult
 
   // Jeda kecil agar transisi animasi loading tetap terasa natural pada analisis lokal
   await wait(1200)
-  return localResult
+  return { ...localResult, usedFallback: true }
 }

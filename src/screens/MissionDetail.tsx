@@ -13,7 +13,7 @@ import {
   Target,
 } from 'lucide-react'
 import Mentor, { MENTOR_NAME } from '../components/Mentor'
-import { BackButton, BottomBar, Page } from '../components/ui'
+import { BackButton, BottomBar, Page, FallbackLabel } from '../components/ui'
 import { cx, type AppState } from '../lib'
 import { jenisUsahaLabel } from '../data/umkmTypes'
 
@@ -105,6 +105,8 @@ export function MissionDetail({ state, patch }: P) {
               <ShieldCheck size={15} strokeWidth={1.75} aria-hidden />
               Izin pemilik: {statusIzin}
             </p>
+
+            <FallbackLabel show={state.fallback.mission} />
           </div>
 
           <div className="mt-4 grid gap-4 md:grid-cols-2">

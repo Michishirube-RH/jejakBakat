@@ -3,7 +3,7 @@ import { ArrowLeft, BarChart3, CircleAlert, Code2, Compass, FileText, Heart, Map
 import { potentials, type Signal } from '../data/mockData'
 import type { PotentialResult } from '../ai/types'
 import PotensiRadar from '../components/PotensiRadar'
-import { Page } from '../components/ui'
+import { FallbackLabel, Page } from '../components/ui'
 import { cx, type AppState } from '../lib'
 
 type P = { state: AppState; patch: (p: Partial<AppState>) => void; reset: () => void }
@@ -95,6 +95,7 @@ export function Results({ state, patch }: P) {
       </div>
 
       <p className="mb-4 mt-10 text-muted">Klik kartu untuk membalik dan menyorot dua sumbu yang berkaitan di grafik.</p>
+      <FallbackLabel show={state.fallback.analysis} className="mb-4" />
       <div className="grid gap-5 md:grid-cols-3">
         {result.potentials.map((r, i) => (
           <FlipCard key={r.potentialId} r={r} rank={i} selected={selectedId === r.potentialId}

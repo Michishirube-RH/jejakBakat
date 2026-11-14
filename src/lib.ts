@@ -39,6 +39,22 @@ export interface AppState {
   ownerName: string
   metricsData: Record<string, { before: string; after: string }>
   chats: Record<string, ChatMsg[]>
+  /**
+   * Penanda layar-layar yang hasilnya berasal dari cadangan aturan lokal
+   * karena LLM gagal atau sedang tidak tersedia.
+   */
+  fallback: {
+    /** Kartu potensi di layar Hasil. */
+    analysis: boolean
+    /** Pesan perkenalan terakhir yang disusun. */
+    introMessage: boolean
+    /** Misi terakhir yang dirancang. */
+    mission: boolean
+    /** Ringkasan Impact Report terakhir. */
+    reportSummary: boolean
+    /** Id pesan mentor yang berasal dari cadangan lokal, dipisah koma. */
+    mentorReply: string
+  }
 }
 
 export const initialState: AppState = {
@@ -59,6 +75,13 @@ export const initialState: AppState = {
   ownerName: '',
   metricsData: {},
   chats: {},
+  fallback: {
+    analysis: false,
+    introMessage: false,
+    mission: false,
+    reportSummary: false,
+    mentorReply: '',
+  },
 }
 
 /** Layar yang boleh dipulihkan saat halaman dimuat ulang. */

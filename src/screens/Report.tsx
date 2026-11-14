@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { BadgeCheck, Clock, Copy, Download, Share2, Check, ShieldCheck, ShieldAlert } from 'lucide-react'
 import { buildImpactReport, type ImpactReportData } from '../ai/mentor'
 import { MentorSay } from '../components/Companion'
-import { Page } from '../components/ui'
+import { FallbackLabel, Page } from '../components/ui'
 import { potentials } from '../data/mockData'
 import { cx, type AppState } from '../lib'
 
@@ -106,6 +106,7 @@ export function Report({ state, patch }: P) {
 
         <section className="mt-6">
           <h2 className="text-xl leading-[26px]">Ringkasan misi</h2>
+          <FallbackLabel show={rep.usedFallback} className="mt-2" />
           <p className="mt-2 text-ink/80 leading-relaxed">{rep.summary}</p>
           {mission.masalah && (
             <p className="mt-3 rounded-2xl bg-paper px-4 py-3 text-sm leading-6 text-ink/80">

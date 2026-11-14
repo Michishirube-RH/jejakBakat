@@ -127,7 +127,16 @@ export function Loading({ state, patch }: P) {
     setErr(false)
     const t = setTimeout(() => setMsg(1), 800)
     analyzePotential(state.answers)
-      .then((result) => live && patch({ result, screen: 'results' }))
+      .then((result) => {
+        if (!live) return
+        // `usedFallback` tidak ikut disimpan di `result`; ia dicatat terpisah.
+        const { usedFallback, ...analysis } = result
+        patch({
+          result: analysis,
+          screen: 'results',
+          fallback: { ...state.fallback, analysis: usedFallback },
+        })
+      })
       .catch(() => live && setErr(true))
     return () => { live = false; clearTimeout(t) }
     // eslint-disable-next-line react-hooks/exhaustive-deps

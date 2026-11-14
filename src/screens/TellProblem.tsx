@@ -11,7 +11,7 @@ import {
   Sparkles,
   Store,
 } from 'lucide-react'
-import { BackButton, Page } from '../components/ui'
+import { BackButton, FallbackLabel, Page } from '../components/ui'
 import { cx, type AppState } from '../lib'
 import {
   LIMITS,
@@ -96,7 +96,7 @@ export function TellProblem({ state, patch }: P) {
       if (!res.ok || !data?.result) throw new Error(data?.message || 'gagal')
       const text = String(data.result).slice(0, LIMITS.introMessage)
       setIntro(text)
-      patch({ introMessage: text })
+      patch({ introMessage: text, fallback: { ...state.fallback, introMessage: false } })
     } catch {
       // Cadangan lokal: tetap sopan dan tidak mengarang nama pemilik.
       const fallback =
@@ -104,7 +104,7 @@ export function TellProblem({ state, patch }: P) {
         `Saya ingin belajar membantu usaha ${umkm.name}${umkm.city ? ` di ${umkm.city}` : ''}. ` +
         `Boleh saya berkunjung sebentar untuk meminta izin dan bertanya langsung? Terima kasih.`
       setIntro(fallback)
-      patch({ introMessage: fallback })
+      patch({ introMessage: fallback, fallback: { ...state.fallback, introMessage: true } })
       setError('Pesan perkenalan memakai contoh bawaan karena layanan AI belum bisa dihubungi. Kamu tetap bisa menyuntingnya.')
     } finally {
       setBusy('none')
@@ -153,12 +153,28 @@ export function TellProblem({ state, patch }: P) {
       if (!res.ok || !data?.result) throw new Error(data?.message || 'gagal')
 
       const mission = toMission(data.result, umkm, problem, permission, potensiName)
-      patch({ mission, screen: 'workspace', stepDone: {}, tasks: {}, notes: {}, chats: {} })
+      patch({
+        mission,
+        screen: 'workspace',
+        stepDone: {},
+        tasks: {},
+        notes: {},
+        chats: {},
+        fallback: { ...state.fallback, mission: false },
+      })
       window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })
     } catch {
       // Cadangan: template per jenis usaha, tidak pernah menyebut UMKM tertentu.
       const mission = missionFromTemplate(umkm, problem, permission, potensiName)
-      patch({ mission, screen: 'workspace', stepDone: {}, tasks: {}, notes: {}, chats: {} })
+      patch({
+        mission,
+        screen: 'workspace',
+        stepDone: {},
+        tasks: {},
+        notes: {},
+        chats: {},
+        fallback: { ...state.fallback, mission: true },
+      })
       window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })
     } finally {
       setBusy('none')
@@ -300,6 +316,7 @@ export function TellProblem({ state, patch }: P) {
 
         {intro && (
           <div className="flex flex-col gap-3">
+            <FallbackLabel show={state.fallback.introMessage} />
             <label htmlFor="intro" className="sr-only">Pesan perkenalan</label>
             <textarea
               id="intro"
