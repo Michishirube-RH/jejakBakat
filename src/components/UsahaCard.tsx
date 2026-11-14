@@ -30,13 +30,13 @@ export function UsahaCard({
       onClick={onPick}
       data-usaha-card="true"
       className={cx(
-        'sheet flex w-full items-stretch gap-0 overflow-hidden p-0 text-left transition-colors hover:bg-clay-soft',
+        'group sheet flex w-full cursor-pointer items-stretch gap-0 overflow-hidden p-0 text-left transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-lg hover:shadow-[#7c4dff]/10 hover:border-[#7c4dff]/40 hover:bg-clay-soft/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7c4dff] active:translate-y-0 active:shadow-sm',
         picked && 'ring-2 ring-[#7c4dff]',
       )}
     >
       <UsahaIllustration
         jenis={place.jenisUsaha}
-        className="h-[112px] w-[104px] flex-none self-center sm:h-[128px] sm:w-[132px]"
+        className="h-[112px] w-[104px] flex-none self-center transition-transform duration-300 ease-out group-hover:scale-[1.03] sm:h-[128px] sm:w-[132px]"
       />
 
       <div className="flex min-w-0 flex-1 flex-col gap-1.5 p-4 sm:p-5">
@@ -70,7 +70,7 @@ export function UsahaCard({
           )}
         </div>
 
-        <span className="mt-1 inline-flex w-fit items-center gap-1.5 rounded-full bg-clay-soft px-3 py-1 text-sm font-semibold text-ink">
+        <span className="mt-1 inline-flex w-fit items-center gap-1.5 rounded-full bg-clay-soft px-3 py-1 text-sm font-semibold text-ink transition-colors duration-200 group-hover:bg-[#7c4dff] group-hover:text-white">
           Pilih usaha ini
         </span>
       </div>
