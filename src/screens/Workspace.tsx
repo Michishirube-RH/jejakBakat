@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Check, Home, Lock, Send, ListChecks, NotebookPen } from 'lucide-react'
-import { missions } from '../data/mockData'
+import { Check, Home, Lock, Send, ListChecks, NotebookPen, ShieldCheck } from 'lucide-react'
 import { mentorReply, type MentorIntent } from '../ai/mentor'
 import { MentorSay } from '../components/Companion'
 import { Page } from '../components/ui'
@@ -16,7 +15,7 @@ const quick: { label: string; intent: MentorIntent }[] = [
 ]
 
 export function Workspace({ state, patch }: P) {
-  const mission = missions.find((m) => m.id === state.missionId)
+  const mission = state.mission
   const firstOpen = mission ? mission.roadmap.findIndex((s) => !state.stepDone[s.id]) : 0
   const activeIdx = firstOpen === -1 ? (mission?.roadmap.length ?? 1) - 1 : firstOpen
   const [view, setView] = useState(activeIdx)
@@ -39,7 +38,19 @@ export function Workspace({ state, patch }: P) {
   // Gulir hanya di dalam area chat, bukan seluruh halaman
   useEffect(() => { scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' }) }, [msgs.length, typing])
 
-  if (!mission || !step) { patch({ screen: 'results' }); return null }
+  if (!mission || !step) {
+    return (
+      <Page>
+        <div className="flex min-h-[60vh] flex-col justify-center">
+          <h2 className="text-[34px] leading-[1.15]">Belum ada misi aktif</h2>
+          <p className="mt-2 text-muted">Pilih UMKM dulu, lalu Jeje merancang misinya untukmu.</p>
+          <button className="btn-primary mt-6 self-start" onClick={() => patch({ screen: 'pickUmkm' })}>
+            Pilih UMKM
+          </button>
+        </div>
+      </Page>
+    )
+  }
 
   const done = state.tasks[step.id] ?? step.tasks.map(() => false)
   const allDone = done.every(Boolean)
@@ -51,13 +62,14 @@ export function Workspace({ state, patch }: P) {
   const send = async (intent: MentorIntent, userText: string) => {
     if (typing) return
     const id = ck(step.id)
-    setChats((c) => ({ ...c, [id]: [...(c[id] ?? []), { from: 'user', text: userText }] }))
+    const outgoing: Msg = { from: 'user', text: userText }
+    setChats((c) => ({ ...c, [id]: [...(c[id] ?? []), outgoing] }))
     setTyping(true)
     const reply = await mentorReply(intent, userText, step.id, {
       mission,
       step,
       userNotes: state.notes[step.id],
-      recentChats: [...msgs, { from: 'user', text: userText }].slice(-10),
+      recentChats: [...msgs, outgoing].slice(-10),
     })
     setChats((c) => ({ ...c, [id]: [...(c[id] ?? []), { from: 'mentor', text: reply }] }))
     setTyping(false)
@@ -79,13 +91,24 @@ export function Workspace({ state, patch }: P) {
     <Page narrow={false}>
       <div className="mb-10 flex flex-wrap items-center gap-3">
         <button onClick={() => patch({ screen: 'welcome' })} className="btn-secondary !min-h-11 !px-4"><Home size={18} strokeWidth={1.75} />Beranda</button>
-        <button onClick={() => patch({ screen: 'mission', viewMissionId: mission.id })} className="btn-secondary !min-h-11 !px-4">Detail misi</button>
+        <button onClick={() => patch({ screen: 'mission' })} className="btn-secondary !min-h-11 !px-4">Detail misi</button>
+        <button onClick={() => patch({ screen: 'tellProblem' })} className="btn-secondary !min-h-11 !px-4">Ceritakan masalahnya</button>
         <p className="flex items-center gap-2 rounded-full bg-clay-soft px-4 py-2 text-sm" role="status">
           <Check size={16} strokeWidth={2} className="text-leaf" />
           Progres tersimpan otomatis · {tasksDone} dari {tasksTotal} tugas selesai
         </p>
       </div>
-      <h1 className="pb-1 text-[40px] leading-[1.15] tracking-[-0.02em] md:text-[53px]">{mission.businessName}</h1>
+      <h1 className="pb-1 text-[34px] leading-[1.15] tracking-[-0.02em] md:text-[48px]">{mission.usaha}</h1>
+      <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted">
+        <span>{mission.jenisUsaha}</span>
+        <span className={cx(
+          'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 font-semibold',
+          mission.ownerPermissionGranted ? 'bg-[#d8f5e1] text-[#0f3d26]' : 'bg-paper ring-1 ring-line',
+        )}>
+          <ShieldCheck size={13} strokeWidth={1.75} aria-hidden />
+          Izin pemilik: {mission.ownerPermissionGranted ? 'Sudah izin' : 'Belum dihubungi'}
+        </span>
+      </p>
       <p className="mt-4 max-w-[68ch] text-lg leading-8 text-muted">{mission.target}</p>
 
       <div className="mt-10 grid items-stretch gap-6 lg:grid-cols-[1fr_1fr]">

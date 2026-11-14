@@ -118,6 +118,19 @@ export const PROBLEM_SUGGESTIONS: Record<JenisUsaha, string[]> = {
   ],
 }
 
+/** Hasil satu tempat dari /api/places, siap ditampilkan di kartu. */
+export interface PlaceResult {
+  id: string
+  name: string
+  categoryLabel: string
+  jenisUsaha: JenisUsaha
+  address: string
+  openingHours?: string
+  phone?: string
+  lat?: number
+  lon?: number
+}
+
 /** Batas panjang yang dipakai bersama oleh UI dan validasi server. */
 export function clampText(value: string, max: number): string {
   return value.slice(0, max)

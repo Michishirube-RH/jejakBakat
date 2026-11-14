@@ -20,6 +20,10 @@ function pick(state: AppState): { mood: MentorMood; text: string } | null {
       return { mood: 'thinking', text: 'Sebentar ya, aku sedang membaca pola jawabanmu.' }
     case 'results':
       return { mood: 'happy', text: 'Ini baru gambaran awal. Pilih satu misi untuk mengujinya.' }
+    case 'pickUmkm':
+      return { mood: 'idle', text: 'Pilih usaha di sekitarmu atau tambahkan sendiri. Aku akan merancang misinya.' }
+    case 'tellProblem':
+      return { mood: 'thinking', text: 'Ceritakan apa yang kamu lihat di usaha ini. Kosong pun boleh.' }
     case 'mission':
       return { mood: 'idle', text: 'Aku yang membimbing, kamu yang mengerjakan. Siap ambil misinya?' }
     case 'workspace':

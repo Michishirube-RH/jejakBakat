@@ -1,4 +1,4 @@
-import type { JenisUsaha } from '../src/data/umkmTypes'
+import type { JenisUsaha, PlaceResult } from '../src/data/umkmTypes'
 
 /**
  * Handler untuk POST /api/places.
@@ -14,17 +14,7 @@ export interface PlacesRequest {
   radiusKm?: number
 }
 
-export interface PlaceResult {
-  id: string
-  name: string
-  categoryLabel: string
-  jenisUsaha: JenisUsaha
-  address: string
-  openingHours?: string
-  phone?: string
-  lat?: number
-  lon?: number
-}
+export type { PlaceResult }
 
 export interface PlacesResponse {
   status: number

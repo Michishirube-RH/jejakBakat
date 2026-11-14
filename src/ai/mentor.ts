@@ -1,4 +1,6 @@
-import { mentorReplies, sampleImpactReport, type Mission, type RoadmapStep, type SampleImpactReport } from '../data/mockData'
+import { mentorReplies } from '../data/mockData'
+import type { RoadmapStep } from '../data/mockData'
+import type { Mission } from '../data/umkmTypes'
 
 export type MentorIntent = 'hint' | 'check' | 'example' | 'general'
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms))
@@ -36,12 +38,11 @@ export async function mentorReply(
           message,
           mission: context?.mission
             ? {
-                businessName: context.mission.businessName,
-                businessType: context.mission.businessType,
-                location: context.mission.location,
-                problem: context.mission.problem,
+                namaUsaha: context.mission.usaha,
+                jenisUsaha: context.mission.jenisUsaha,
+                lokasi: context.mission.lokasi,
+                masalah: context.mission.masalah,
                 target: context.mission.target,
-                ownerName: context.mission.ownerName,
               }
             : undefined,
           step: context?.step
@@ -73,13 +74,12 @@ export async function mentorReply(
   // Cadangan cerdas dan kontekstual dari data lokal
   await wait(600 + Math.random() * 400)
   const q = message.toLowerCase().trim()
-  const biz = context?.mission?.businessName || 'UMKM ini'
-  const owner = context?.mission?.ownerName || 'pemilik usaha'
+  const biz = context?.mission?.usaha || 'UMKM ini'
   const stepTitle = context?.step?.title || 'langkah ini'
   const stepGoal = context?.step?.goal || 'tujuan langkah ini'
 
   if (q.includes('aku siapa') || q.includes('siapa aku')) {
-    return `Kamu adalah peserta penjelajah bakat di JejakBakat AI yang sedang belajar sambil membantu Kak ${owner} (${biz}).`
+    return `Kamu adalah peserta penjelajah bakat di JejakBakat AI yang sedang belajar sambil membantu ${biz}.`
   }
   if (q.includes('kamu siapa') || q.includes('siapa kamu')) {
     return `Aku Jeje, mentor AI-mu di JejakBakat AI! Aku siap mendampingimu langkah demi langkah menyelesaikan misi ${biz}.`
@@ -88,13 +88,27 @@ export async function mentorReply(
     return `Di langkah "${stepTitle}", tujuan kita adalah ${stepGoal.toLowerCase()}. Coba fokus mulai dari tugas pertama dulu ya!`
   }
   if (q === 'oy' || q === 'halo' || q === 'hai' || q === 'tes' || q === 'p') {
-    return `Halo! Yuk kita fokus lagi bantu Kak ${owner} di langkah "${stepTitle}". Ada bagian tugas yang membuatmu ragu?`
+    return `Halo! Yuk kita fokus lagi bantu ${biz} di langkah "${stepTitle}". Ada bagian tugas yang membuatmu ragu?`
   }
 
   const list = mentorReplies[intent]
   const k = key + intent
   const i = (counters[k] = (counters[k] ?? -1) + 1)
   return list[i % list.length]
+}
+
+/** Hasil siap tampil untuk Impact Report. */
+export interface ImpactReportData {
+  userName: string
+  missionName: string
+  date: string
+  business: string
+  summary: string
+  provenSkills: string[]
+  hours: number
+  ownerPermissionGranted: boolean
+  strengthenedPotential: string
+  nextSteps: string[]
 }
 
 export interface ReportInput {
@@ -108,12 +122,17 @@ export interface ReportInput {
  * Menyusun Impact Report berbasis misi aktif, catatan pengguna, dan ringkasan LLM.
  * Jika LLM gagal atau timeout, otomatis menggunakan fallback template lokal yang kontekstual.
  */
-export async function buildImpactReport({ mission, userName, notes, potentialName }: ReportInput): Promise<SampleImpactReport> {
+export async function buildImpactReport({
+  mission,
+  userName,
+  notes,
+  potentialName,
+}: ReportInput): Promise<ImpactReportData> {
   const userNotes = mission.roadmap.map((s) => notes[s.id]?.trim()).filter(Boolean) as string[]
 
   let summary = userNotes.length
     ? `${mission.target} Catatan kerja: ${userNotes.join(' ')}`
-    : `Menyelesaikan misi untuk ${mission.businessName} dengan target: ${mission.target}.`
+    : `Menyelesaikan misi untuk ${mission.usaha} dengan target: ${mission.target}.`
 
   try {
     const controller = new AbortController()
@@ -126,12 +145,11 @@ export async function buildImpactReport({ mission, userName, notes, potentialNam
         task: 'buildReportSummary',
         payload: {
           mission: {
-            businessName: mission.businessName,
-            businessType: mission.businessType,
-            location: mission.location,
-            problem: mission.problem,
+            namaUsaha: mission.usaha,
+            jenisUsaha: mission.jenisUsaha,
+            lokasi: mission.lokasi,
+            masalah: mission.masalah,
             target: mission.target,
-            ownerName: mission.ownerName,
           },
           userNotes,
           userName: userName || 'Peserta',
@@ -154,22 +172,14 @@ export async function buildImpactReport({ mission, userName, notes, potentialNam
 
   return {
     userName: userName || '',
-    missionName: `Misi ${mission.businessName}: ${mission.target}`,
+    missionName: `Misi ${mission.usaha}`,
     date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
-    business: `${mission.businessName}, ${mission.location}`,
+    business: mission.lokasi ? `${mission.usaha}, ${mission.lokasi}` : mission.usaha,
     summary,
     provenSkills: mission.skills || [],
-    metrics: (mission.metricsOptions || []).map((opt) => ({
-      label: opt.label,
-      unit: opt.unit,
-      before: '',
-      after: '',
-    })),
-    hours: mission.estimatedHours || 6,
-    ownerTestimonial: '',
-    sampleTestimonial: mission.sampleTestimonial || '',
-    ownerName: mission.ownerName || '',
-    strengthenedPotential: potentialName,
-    nextSteps: mission.nextSteps || [],
+    hours: mission.jam || 5,
+    ownerPermissionGranted: mission.ownerPermissionGranted,
+    strengthenedPotential: potentialName || '',
+    nextSteps: mission.roadmap.map((s) => s.title),
   }
 }

@@ -1,6 +1,5 @@
 import { useState, type ReactNode } from 'react'
-import { BarChart3, Compass, Heart, Code2, Megaphone, Palette, Lock, Check } from 'lucide-react'
-import { missions } from '../data/mockData'
+import { BarChart3, Compass, Heart, Code2, Megaphone, Palette, Check } from 'lucide-react'
 import Mentor from '../components/Mentor'
 import type { AppState } from '../lib'
 import { cx } from '../lib'
@@ -28,9 +27,7 @@ function Feature({ title, body, bg, flip, children }: { title: string; body: str
 
 export function Welcome({ state, patch, reset }: P) {
   const has = Object.keys(state.answers).length > 0 || state.result
-  const [tab, setTab] = useState(0)
-  const m = missions[tab]
-  const mission = missions.find((x) => x.id === state.missionId)
+  const mission = state.mission
   const stepsDone = mission ? mission.roadmap.filter((r) => state.stepDone[r.id]).length : 0
   const allDone = !!mission && stepsDone === mission.roadmap.length
   const start = () => patch({ screen: 'intro', qIndex: 0 })
@@ -50,13 +47,13 @@ export function Welcome({ state, patch, reset }: P) {
               <button onClick={() => patch({ screen: allDone ? 'report' : 'workspace' })} className="mt-5 flex w-full max-w-[460px] items-center justify-between gap-4 rounded-2xl border border-line bg-white px-5 py-4 text-left md:mx-0 mx-auto">
                 <span>
                   <span className="block text-sm text-muted">{allDone ? 'Misi selesai' : 'Misi yang sedang berjalan'}</span>
-                  <span className="block font-semibold">{mission.businessName} <span className="ml-1.5 inline-block rounded-full bg-paper px-2 py-0.5 text-[11px] font-normal text-muted ring-1 ring-line">Misi contoh untuk demo</span></span>
+                  <span className="block font-semibold">{mission.usaha}</span>
                   <span className="block text-sm text-muted">{stepsDone} dari {mission.roadmap.length} langkah selesai</span>
                 </span>
                 <span className="btn-primary !min-h-11 !px-5 !text-sm">{allDone ? 'Lihat laporan' : 'Lanjutkan misi'}</span>
               </button>
             )}
-            <p className="mt-4 text-sm text-muted">Jawabanmu dikirim ke layanan AI untuk dianalisis dan disimpan hanya di perangkatmu.</p>
+            <p className="mt-4 text-sm text-muted">Jawaban dan teks masalahmu dikirim ke layanan AI untuk dianalisis. Lokasi kasar (dibulatkan) hanya dikirim ke penyedia peta bila kamu mengizinkan pencarian di sekitar. Semua data disimpan di perangkatmu.</p>
           </div>
           <div className="mx-auto flex w-full max-w-[420px] justify-center">
             <Mentor mood="greet" size={320} interactive />
@@ -74,7 +71,7 @@ export function Welcome({ state, patch, reset }: P) {
         <div className="mx-auto max-w-[1200px] px-5 py-16 text-center md:py-20">
           <h2 className="text-[36px] leading-[1.1] md:text-[48px]">Dari jawaban singkat sampai bukti nyata</h2>
           <dl className="mt-10 grid gap-8 sm:grid-cols-3">
-            {[['10', 'pertanyaan singkat'], ['3', 'potensi dengan bukti'], ['3', 'misi UMKM untuk dicoba']].map(([n, l]) => (
+            {[['10', 'pertanyaan singkat'], ['3', 'potensi dengan bukti'], ['3', 'langkah misi yang terarah']].map(([n, l]) => (
               <div key={l}><dt className="font-display text-6xl">{n}</dt><dd className="mt-1 text-white/75">{l}</dd></div>
             ))}
           </dl>
@@ -91,10 +88,23 @@ export function Welcome({ state, patch, reset }: P) {
       </Feature>
 
       <Feature bg="bg-gradient-to-b from-[#f3efff] to-white" flip title="Sesuai levelmu" body="Mulai dari 10 pertanyaan, lanjut ke misi yang cocok dengan potensi teratasmu, mulai dari yang mudah.">
-        <div className="relative h-[320px] w-full max-w-[440px]">
-          <div className="absolute left-0 top-4 w-[62%] rounded-3xl border-2 border-[#7c4dff] bg-white p-5"><div className="flex items-center justify-between"><span className="rounded-full bg-[#7c4dff] px-3 py-1 text-xs font-semibold text-white">Untukmu</span><span className="rounded-full bg-paper px-2 py-0.5 text-[10px] text-muted ring-1 ring-line">Contoh demo</span></div><div className="mt-6 h-16 rounded-2xl bg-[#ddd6fe]" /><p className="mt-3 font-medium">Warung Bu Sari</p></div>
-          <div className="absolute right-0 top-24 w-[50%] rounded-3xl border border-line bg-white p-5"><div className="h-14 rounded-2xl bg-[#fde68a]" /><p className="mt-3 font-medium">Kopi Tetangga</p></div>
-          <div className="absolute bottom-0 left-8 w-[50%] rounded-3xl border border-line bg-white p-5"><div className="h-10 rounded-2xl bg-[#bbf7d0]" /><p className="mt-3 font-medium">Batik Ibu Lastri</p></div>
+        <div className="relative h-[320px] w-full max-w-[440px]" aria-hidden>
+          <div className="absolute left-0 top-4 w-[62%] rounded-3xl border-2 border-[#7c4dff] bg-white p-5">
+            <div className="flex items-center justify-between">
+              <span className="rounded-full bg-[#7c4dff] px-3 py-1 text-xs font-semibold text-white">Untukmu</span>
+              <span className="h-2 w-10 rounded-full bg-line" />
+            </div>
+            <div className="mt-6 h-16 rounded-2xl bg-[#ddd6fe]" />
+            <div className="mt-3 h-2.5 w-2/3 rounded-full bg-line" />
+          </div>
+          <div className="absolute right-0 top-24 w-[50%] rounded-3xl border border-line bg-white p-5">
+            <div className="h-14 rounded-2xl bg-[#fde68a]" />
+            <div className="mt-3 h-2.5 w-3/4 rounded-full bg-line" />
+          </div>
+          <div className="absolute bottom-0 left-8 w-[50%] rounded-3xl border border-line bg-white p-5">
+            <div className="h-10 rounded-2xl bg-[#bbf7d0]" />
+            <div className="mt-3 h-2.5 w-1/2 rounded-full bg-line" />
+          </div>
         </div>
       </Feature>
 
@@ -125,18 +135,25 @@ export function Welcome({ state, patch, reset }: P) {
       </section>
 
       <section className="bg-white">
-        <div className="mx-auto max-w-[1200px] px-5 py-16 md:py-24">
-          <h2 className="text-center text-[36px] leading-[1.1] md:text-[48px]">Misi untuk setiap perjalanan</h2>
-          <div role="tablist" className="mx-auto mt-8 flex w-fit max-w-full flex-wrap justify-center gap-1 rounded-full border border-line p-1">
-            {missions.map((x, i) => <button key={x.id} role="tab" aria-selected={tab === i} onClick={() => setTab(i)} className={cx('min-h-11 rounded-full px-5 text-sm font-medium', tab === i ? 'bg-paper' : 'text-muted')}>{x.businessName}</button>)}
-          </div>
-          <div className="mt-8 grid gap-8 md:grid-cols-[1fr_1.4fr]">
-            <div>
-              <p className="font-semibold">{m.businessType}, {m.location}</p>
-              <ul className="mt-4 divide-y divide-line">{m.roadmap.map((r, i) => <li key={r.id} className="flex min-h-12 items-center gap-3 py-2">{i === 0 ? <Check size={18} className="text-leaf" strokeWidth={2} /> : <Lock size={18} className="text-muted" strokeWidth={1.75} />}{r.title}</li>)}</ul>
-            </div>
-            <div className="rounded-3xl bg-paper p-8"><p className="font-display text-2xl leading-8">{m.problem}</p><p className="mt-4 text-muted">Targetmu: {m.target}</p></div>
-          </div>
+        <div className="mx-auto max-w-[1200px] px-5 py-16 text-center md:py-24">
+          <h2 className="text-[36px] leading-[1.1] md:text-[48px]">Misi nyata, bukan contoh</h2>
+          <p className="mx-auto mt-4 max-w-[62ch] text-lg text-muted">
+            Kamu memilih sendiri usaha di sekitarmu atau menambahkan usaha yang kamu kenal. Jeje lalu merancang tiga
+            langkah yang bisa kamu kerjakan, dimulai dari bertemu pemilik dan meminta izin.
+          </p>
+          <ol className="mx-auto mt-10 grid max-w-[900px] gap-4 text-left md:grid-cols-3">
+            {[
+              ['Pilih usaha', 'Cari UMKM di sekitar atau tambahkan sendiri.'],
+              ['Ceritakan masalahnya', 'Tulis apa yang kamu lihat atau dikeluhkan pemilik.'],
+              ['Kerjakan misinya', 'Tiga langkah terarah, didampingi mentor AI.'],
+            ].map(([t, b], i) => (
+              <li key={t} className="rounded-3xl bg-paper p-6">
+                <span className="grid h-9 w-9 place-items-center rounded-full bg-[#7c4dff] text-sm font-semibold text-white">{i + 1}</span>
+                <p className="mt-3 font-semibold">{t}</p>
+                <p className="mt-1 text-sm text-muted">{b}</p>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
@@ -151,7 +168,7 @@ export function Welcome({ state, patch, reset }: P) {
       <footer className="bg-black text-white">
         <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-4 px-5 py-10 text-sm">
           <p className="font-display text-2xl">JejakBakat</p>
-          <p className="text-white/70">Jawabanmu dikirim ke layanan AI untuk dianalisis dan disimpan hanya di perangkatmu.</p>
+          <p className="text-white/70">Jawaban dan teks masalahmu dikirim ke layanan AI untuk dianalisis. Lokasi kasar dikirim ke penyedia peta hanya bila kamu mengizinkan.</p>
           {has && <button onClick={() => { if (confirm('Hapus semua jawaban dan hasil dari perangkat ini?')) reset() }} className="min-h-11 underline underline-offset-4">Hapus data saya</button>}
         </div>
       </footer>
