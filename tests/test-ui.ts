@@ -313,17 +313,48 @@ await test('pencarian nyata menampilkan hasil dan atribusi', async () => {
     localStorage.setItem('jejakbakat:v2', JSON.stringify(s));
   })()`)
   await cdp.goto(BASE)
-  await cdp.waitFor('document.body.innerText.includes("usaha ditemukan")', 25000)
+  await cdp.waitFor('document.querySelectorAll(\'[data-usaha-card="true"]\').length > 0', 25000)
   const t = await cdp.text()
   assert(t.includes('© OpenStreetMap contributors dan Geoapify'), 'atribusi tidak ada')
   assert(!t.includes('Indomaret') && !t.includes('Alfamart'), 'jaringan besar ikut tampil')
   await assertNoLegacy('hasil pencarian')
 })
 
+await test('hanya 3 usaha terdekat yang tampil sebagai kartu', async () => {
+  const n = await cdp.eval<number>(`document.querySelectorAll('[data-usaha-card="true"]').length`)
+  assert(n === 3, `kartu harus 3, dapat ${n}`)
+  // Setiap kartu wajib punya ilustrasi; tidak ada kartu tanpa gambar.
+  const svg = await cdp.eval<number>(`document.querySelectorAll('[data-usaha-card="true"] svg[role="img"]').length`)
+  assert(svg === 3, `ilustrasi harus 3, dapat ${svg}`)
+  const t = await cdp.text()
+  assert(t.includes('3 usaha terdekat'), 'judul "3 usaha terdekat" tidak ada')
+  // Info yang baru diketahui setelah misi dirancang tidak boleh muncul di sini.
+  assert(!t.includes('Cocok dengan'), 'menampilkan kecocokan potensi yang belum diketahui')
+})
+
+await test('tombol Pilih UMKM lain membuka daftar ringkas sisanya', async () => {
+  const label = await cdp.eval<string>(`(() => {
+    const b = [...document.querySelectorAll('button')].find(x => /Pilih UMKM lain/.test(x.textContent));
+    return b ? b.textContent.replace(/\\s+/g,' ').trim() : '';
+  })()`)
+  assert(/Pilih UMKM lain \(\d+ lagi\)/.test(label), `label tombol salah: "${label}"`)
+
+  const dibuka = await cdp.eval<boolean>(`(() => {
+    const b = [...document.querySelectorAll('button')].find(x => /Pilih UMKM lain/.test(x.textContent));
+    if (!b) return false; b.click(); return true;
+  })()`)
+  assert(dibuka, 'tombol tidak bisa diklik')
+  await cdp.waitFor('document.querySelectorAll(\'#daftar-umkm-lain li\').length > 0', 8000)
+  const baris = await cdp.eval<number>(`document.querySelectorAll('#daftar-umkm-lain li').length`)
+  assert(baris > 0, 'daftar ringkas kosong')
+  // Jumlah total: 3 kartu + baris daftar = seluruh hasil pencarian.
+  const total = 3 + baris
+  assert(total >= 4, `total usaha terlalu sedikit: ${total}`)
+})
+
 await test('memilih hasil pencarian membuka Ceritakan masalahnya', async () => {
   const ok = await cdp.eval<boolean>(`(() => {
-    const btn = [...document.querySelectorAll('button')].find(b => b.textContent.includes('usaha ditemukan') === false && b.querySelector('p span.truncate'));
-    const cards = [...document.querySelectorAll('ul li button')];
+    const cards = [...document.querySelectorAll('[data-usaha-card="true"]')];
     if (!cards.length) return false;
     cards[0].scrollIntoView({ block: 'center' });
     cards[0].click();

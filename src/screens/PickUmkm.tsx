@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { AlertCircle, Check, Loader2, LocateFixed, MapPin, Phone, Plus, Search, Store } from 'lucide-react'
+import { AlertCircle, ChevronDown, Loader2, LocateFixed, Plus, Search, Store } from 'lucide-react'
 import { BackButton, Page } from '../components/ui'
+import { UsahaCard } from '../components/UsahaCard'
 import { cx, type AppState } from '../lib'
 import {
   JENIS_USAHA,
@@ -42,6 +43,10 @@ export function PickUmkm({ state, patch }: P) {
    * 0 berarti tidak sedang dibatasi.
    */
   const [waitSec, setWaitSec] = useState(0)
+  /** Titik pusat pencarian terakhir, dipakai menghitung jarak tiap usaha. */
+  const [center, setCenter] = useState<{ lat: number; lon: number } | null>(null)
+  /** true bila pengguna membuka daftar lengkap di balik 3 kartu teratas. */
+  const [showAll, setShowAll] = useState(false)
 
   // ---- Tab manual ----
   const [name, setName] = useState('')
@@ -118,7 +123,14 @@ export function PickUmkm({ state, patch }: P) {
 
       const list: PlaceResult[] = Array.isArray(data.results) ? data.results : []
       setCenterSource(data.center?.source === 'user' ? 'user' : 'default')
+      setCenter(
+        typeof data.center?.lat === 'number' && typeof data.center?.lon === 'number'
+          ? { lat: data.center.lat, lon: data.center.lon }
+          : null,
+      )
       setResults(list)
+      // Setiap pencarian baru kembali ke tampilan ringkas: 3 kartu teratas.
+      setShowAll(false)
       setStatus(list.length === 0 ? 'empty' : 'ready')
       if (list.length === 0) {
         setMessage('Tidak ada usaha yang cocok di sekitar sini. Coba perbesar radius atau tambahkan usaha sendiri.')
@@ -219,6 +231,15 @@ export function PickUmkm({ state, patch }: P) {
   /* ---------------------------------------------------------------- */
   /* Render                                                           */
   /* ---------------------------------------------------------------- */
+
+  /**
+   * Hasil pencarian dari server sudah diurutkan dari yang terdekat.
+   * Tiga teratas ditampilkan sebagai kartu bergambar; sisanya masuk daftar
+   * ringkas. Bila hasilnya kurang dari tiga, kartu yang tampil seadanya --
+   * tidak pernah ditambah usaha karangan.
+   */
+  const teratas = results.slice(0, 3)
+  const sisanya = results.slice(3)
 
   return (
     <Page narrow={false}>
@@ -332,52 +353,67 @@ export function PickUmkm({ state, patch }: P) {
               {message && (
                 <p role="status" className="mt-4 rounded-2xl bg-clay-soft px-4 py-3 text-sm">{message}</p>
               )}
-              <p className="mt-4 text-sm text-muted" aria-live="polite">
-                {results.length} usaha ditemukan. Pilih satu untuk lanjut.
-              </p>
-              <ul className="mt-3 grid gap-3 md:grid-cols-2">
-                {results.map((r) => (
+
+              {/* Tiga usaha terdekat sebagai kartu bergambar. */}
+              <div className="mt-5 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                <p className="text-sm font-semibold" aria-live="polite">
+                  {teratas.length === 3 ? '3 usaha terdekat' : `${teratas.length} usaha terdekat`}
+                </p>
+                <p className="text-xs text-muted">Diurutkan dari yang paling dekat</p>
+              </div>
+              <ul className="mt-3 flex flex-col gap-3">
+                {teratas.map((r) => (
                   <li key={r.id}>
-                    <button
-                      onClick={() => choose(r)}
-                      className={cx(
-                        'sheet flex w-full flex-col gap-2 p-5 text-left transition-colors hover:bg-clay-soft',
-                        pickedId === r.id && 'ring-2 ring-[#7c4dff]',
-                      )}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="flex items-center gap-2 font-semibold leading-6">
-                            <Store size={17} strokeWidth={1.75} className="flex-none text-muted" aria-hidden />
-                            <span className="truncate">{r.name}</span>
-                          </p>
-                          <p className="mt-0.5 text-sm text-muted">{r.categoryLabel}</p>
-                        </div>
-                        {pickedId === r.id && (
-                          <span className="grid h-6 w-6 flex-none place-items-center rounded-full bg-[#7c4dff]" aria-hidden>
-                            <Check size={15} strokeWidth={3} color="#fff" />
-                          </span>
-                        )}
-                      </div>
-                      {r.address && (
-                        <p className="flex items-start gap-1.5 text-sm text-muted">
-                          <MapPin size={14} strokeWidth={1.75} className="mt-1 flex-none" aria-hidden />
-                          <span className="line-clamp-2">{r.address}</span>
-                        </p>
-                      )}
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted">
-                        {r.openingHours && <span>Buka: {r.openingHours}</span>}
-                        {r.phone && (
-                          <span className="flex items-center gap-1">
-                            <Phone size={13} strokeWidth={1.75} aria-hidden />
-                            {r.phone}
-                          </span>
-                        )}
-                      </div>
-                    </button>
+                    <UsahaCard place={r} picked={pickedId === r.id} center={center} onPick={() => choose(r)} />
                   </li>
                 ))}
               </ul>
+
+              {/* Daftar ringkas sisanya. Disembunyikan selama 3 kartu sudah mewakili semua hasil. */}
+              {sisanya.length > 0 && (
+                <>
+                  <button
+                    className="btn-secondary mt-4 !min-h-11 w-full justify-between !px-4"
+                    aria-expanded={showAll}
+                    aria-controls="daftar-umkm-lain"
+                    onClick={() => setShowAll((v) => !v)}
+                  >
+                    <span className="flex items-center gap-2">
+                      <Store size={17} strokeWidth={1.75} aria-hidden />
+                      {showAll ? 'Sembunyikan daftar' : `Pilih UMKM lain (${sisanya.length} lagi)`}
+                    </span>
+                    <ChevronDown
+                      size={18}
+                      strokeWidth={2}
+                      aria-hidden
+                      className={cx('transition-transform', showAll && 'rotate-180')}
+                    />
+                  </button>
+
+                  {showAll && (
+                    <ul id="daftar-umkm-lain" className="mt-3 flex flex-col divide-y divide-line rounded-2xl bg-white ring-1 ring-line">
+                      {sisanya.map((r) => (
+                        <li key={r.id}>
+                          <button
+                            onClick={() => choose(r)}
+                            className="flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-clay-soft"
+                          >
+                            <Store size={17} strokeWidth={1.75} className="mt-1 flex-none text-muted" aria-hidden />
+                            <span className="min-w-0">
+                              <span className="block truncate font-semibold">{r.name}</span>
+                              <span className="block truncate text-sm text-muted">
+                                {r.categoryLabel}
+                                {r.address ? ` · ${r.address}` : ''}
+                              </span>
+                            </span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </>
+              )}
+
               <p className="mt-5 text-xs text-muted">© OpenStreetMap contributors dan Geoapify</p>
             </>
           )}

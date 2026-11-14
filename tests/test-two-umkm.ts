@@ -115,8 +115,10 @@ await wait(2500)
 async function waitForSearchResults(timeout = 120000): Promise<string> {
   const start = Date.now()
   while (Date.now() - start < timeout) {
+    // Layar kini menampilkan 3 kartu bergambar, bukan baris "N usaha ditemukan".
+    const adaKartu: boolean = await ev('document.querySelectorAll(\'[data-usaha-card="true"]\').length > 0')
+    if (adaKartu) return await ev('document.body.innerText')
     const t: string = await ev('document.body.innerText')
-    if (t.includes('usaha ditemukan')) return t
     if (t.includes('Terlalu banyak permintaan')) {
       console.log('  (kuota rate limit habis, menunggu 15 detik lalu mencoba lagi)')
       await wait(15000)
@@ -130,15 +132,20 @@ async function waitForSearchResults(timeout = 120000): Promise<string> {
 }
 
 const listText = await waitForSearchResults()
-const count = (listText.match(/(\d+) usaha ditemukan/) || [])[1]
-console.log(`  hasil pencarian: ${count} usaha`)
+const kartu = (await ev<number>(`document.querySelectorAll('[data-usaha-card="true"]').length`)) ?? 0
+const lain = (await ev<number>(`(() => {
+  const b = [...document.querySelectorAll('button')].find(x => /Pilih UMKM lain/.test(x.textContent));
+  const m = b ? b.textContent.match(/\\((\\d+) lagi\\)/) : null;
+  return m ? Number(m[1]) : 0;
+})()`)) ?? 0
+console.log(`  usaha tampil   : ${kartu} kartu + ${lain} di daftar lain`)
 console.log(`  atribusi tampil: ${listText.includes('OpenStreetMap contributors dan Geoapify')}`)
 
 // Pilih kartu pertama dan catat namanya.
 const picked = await ev(`(() => {
-  const cards = [...document.querySelectorAll('ul li button')];
+  const cards = [...document.querySelectorAll('[data-usaha-card="true"]')];
   if (!cards.length) return null;
-  const name = cards[0].querySelector('p span.truncate')?.textContent?.trim() || '';
+  const name = cards[0].querySelector('p')?.textContent?.trim() || '';
   cards[0].scrollIntoView({block:'center'});
   cards[0].click();
   return name;
