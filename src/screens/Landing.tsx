@@ -54,7 +54,6 @@ export function Welcome({ state, patch, reset }: P) {
                 <span className="btn-primary !min-h-11 !px-5 !text-sm">{allDone ? 'Lihat laporan' : 'Lanjutkan misi'}</span>
               </button>
             )}
-            <p className="mt-4 text-sm text-muted">Jawaban, nama, cerita, dan catatan kerjamu dikirim ke layanan AI pihak ketiga (Google Gemini) untuk dianalisis. Jangan menulis data pribadi orang lain. Lokasi kasar (dibulatkan) hanya dikirim ke penyedia peta bila kamu mengizinkan. Hasilmu disimpan di perangkatmu dan tidak disimpan di server kami.</p>
           </div>
           <div className="mx-auto flex w-full max-w-[420px] justify-center">
             <Mentor mood="greet" size={320} interactive />
