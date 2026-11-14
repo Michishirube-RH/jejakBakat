@@ -120,11 +120,16 @@ export function Results({ state, patch }: P) {
             </p>
           </div>
           <button
-            className="inline-flex min-h-14 flex-none items-center justify-center gap-2 self-start rounded-full bg-[#7c4dff] px-7 text-base font-semibold text-white md:self-auto"
+            className="group relative inline-flex min-h-14 flex-none items-center justify-center gap-2.5 self-start overflow-hidden rounded-full bg-[#7c4dff] px-7 text-base font-semibold text-white shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-[#15803d]/30 active:translate-y-0 active:scale-[0.98] md:self-auto cursor-pointer"
             onClick={() => patch({ screen: 'pickUmkm' })}
           >
-            <Compass size={20} strokeWidth={2} aria-hidden />
-            Pilih UMKM-mu
+            {/* Animasi warna hijau menyebar/swirl yang memenuhi tombol saat hover */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute top-1/2 left-1/2 h-[340px] w-[340px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,_#22c55e_0%,_#16a34a_40%,_#15803d_80%)] opacity-0 scale-0 transition-all duration-500 ease-out group-hover:scale-100 group-hover:opacity-100 group-hover:rotate-180"
+            />
+            <Compass size={20} strokeWidth={2} className="relative z-10 transition-transform duration-500 ease-out group-hover:rotate-90 group-hover:scale-110" aria-hidden />
+            <span className="relative z-10">Pilih UMKM-mu</span>
           </button>
         </div>
         {state.umkm && (
