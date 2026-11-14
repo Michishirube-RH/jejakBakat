@@ -242,25 +242,17 @@ export function Sertifikat({ state, rep, patch }: Props) {
                 </div>
 
                 <div className="flex flex-col items-center">
-                  {state.ttdPenerbit ? (
-                    <img
-                      src={state.ttdPenerbit}
-                      alt="Tanda tangan penerbit"
-                      className="cert-ttd max-h-[70px] w-full object-contain object-bottom"
-                    />
-                  ) : (
-                    <span className="flex h-[70px] items-center">
-                      <svg width="150" height="52" viewBox="0 0 150 52" aria-hidden>
-                        <path
-                          d="M8 36c10-18 16-4 22-14s10 10 18 2 10 6 18-4 12 12 20 4 14 4 22-6 12 8 20 2"
-                          fill="none"
-                          stroke="#cbb9ff"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                    </span>
-                  )}
+                  <span className="flex h-[70px] items-center">
+                    <svg width="150" height="52" viewBox="0 0 150 52" aria-hidden>
+                      <path
+                        d="M8 36c10-18 16-4 22-14s10 10 18 2 10 6 18-4 12 12 20 4 14 4 22-6 12 8 20 2"
+                        fill="none"
+                        stroke="#cbb9ff"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </span>
                   <div className="mt-1 h-px w-full bg-white/45" />
                   <p className="mt-2 text-base font-semibold text-[#a78bfa]">JejakBakat AI</p>
                   <p className="text-sm text-white/70">Penerbit</p>
@@ -272,40 +264,25 @@ export function Sertifikat({ state, rep, patch }: Props) {
       </div>
 
       {/* Pengaturan tanda tangan, tidak ikut tercetak */}
-      <div className="no-print mx-auto grid w-full max-w-[1123px] gap-4 rounded-2xl bg-white p-5 ring-1 ring-line md:grid-cols-2">
+      <div className="no-print mx-auto flex w-full max-w-[1123px] flex-col gap-4 rounded-2xl bg-white p-5 ring-1 ring-line">
         <div>
           <p className="flex items-center gap-2 text-sm font-semibold">
             <Type size={15} strokeWidth={1.75} aria-hidden />
             Tanda tangan peserta
           </p>
-          <p className="mt-0.5 text-xs text-muted">Goreskan dengan mouse atau jari.</p>
+          <p className="mt-0.5 text-xs text-muted">Goreskan tanda tanganmu dengan mouse atau jari untuk dicantumkan di sertifikat.</p>
           <TandaTangan
             value={state.ttdPeserta}
             onChange={(v) => patch({ ttdPeserta: v })}
             label="Tanda tangan peserta di sini"
-            className="mt-2"
+            className="mt-2 max-w-xl"
           />
         </div>
-        <div>
-          <p className="flex items-center gap-2 text-sm font-semibold">
-            <Type size={15} strokeWidth={1.75} aria-hidden />
-            Tanda tangan penerbit
-          </p>
-          <p className="mt-0.5 text-xs text-muted">
-            Kosongkan bila tidak diperlukan — sertifikat akan memakai tanda tangan gaya bawaan.
-          </p>
-          <TandaTangan
-            value={state.ttdPenerbit}
-            onChange={(v) => patch({ ttdPenerbit: v })}
-            label="Tanda tangan penerbit di sini"
-            className="mt-2"
-          />
-        </div>
-        <p className="text-xs text-muted md:col-span-2">
+        <p className="text-xs text-muted">
           Sertifikat ini adalah penghargaan dan portofolio. Keabsahannya dapat dikonfirmasi ke UMKM yang
           bersangkutan, tidak diverifikasi oleh sistem.
         </p>
-        <div className="flex flex-wrap items-center gap-3 md:col-span-2">
+        <div className="flex flex-wrap items-center gap-3">
           <button className="btn-primary" onClick={() => window.print()}>
             <Download size={18} strokeWidth={1.75} aria-hidden />
             Unduh sertifikat (PDF)

@@ -586,9 +586,9 @@ await test('nomor dan tanggal sertifikat stabil setelah muat ulang', async () =>
   assert(pertama === kedua, `nomor/tanggal berubah: ${pertama} -> ${kedua}`)
 })
 
-await test('kanvas tanda tangan tersedia untuk peserta dan penerbit', async () => {
+await test('kanvas tanda tangan tersedia untuk peserta (penerbit memakai gaya bawaan)', async () => {
   const n = await cdp.eval<number>(`document.querySelectorAll('[data-tanda-tangan="true"]').length`)
-  assert(n === 2, `kanvas tanda tangan harus 2, dapat ${n}`)
+  assert(n === 1, `kanvas tanda tangan harus 1, dapat ${n}`)
 })
 
 await test('coretan mouse tersimpan dan tampil di sertifikat', async () => {
