@@ -38,7 +38,7 @@ export function Welcome({ state, patch, reset }: P) {
       <section className="overflow-hidden">
         <div className="mx-auto grid max-w-[1200px] items-center gap-6 px-5 pb-16 pt-12 md:grid-cols-[1.25fr_1fr] md:pb-24 md:pt-20">
           <div className="text-center md:text-left">
-            <h1 className="text-[clamp(44px,6.4vw,88px)] leading-[0.98] tracking-[-0.03em]">Temukan potensimu dari kebiasaan sehari-hari.</h1>
+            <h1 className="text-[clamp(44px,6.4vw,88px)] leading-[1.16] tracking-[-0.02em]">Temukan potensimu dari kebiasaan sehari-hari.</h1>
             <p className="mx-auto mt-6 max-w-[460px] text-lg text-muted md:mx-0">10 pertanyaan singkat, sekitar 4 menit, tanpa daftar akun. Lalu buktikan lewat misi nyata untuk UMKM.</p>
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row md:justify-start sm:justify-center">
               <button className="btn-primary" onClick={start}>Mulai</button>
