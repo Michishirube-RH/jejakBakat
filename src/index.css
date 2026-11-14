@@ -100,17 +100,38 @@ input[type='range']::-moz-range-thumb { width: 18px; height: 18px; border-radius
 @media print {
   body { background: #fff !important; }
   .no-print { display: none !important; }
-  .report-sheet { border: 0 !important; border-radius: 0 !important; max-width: none !important; }
 
-  /* Sertifikat: satu halaman A4 landscape, warna latar dipertahankan. */
+  /* Layar Laporan Dampak hanya berisi sertifikat, jadi satu-satunya hal yang
+     tercetak adalah sertifikat: satu halaman A4 landscape tanpa margin. */
   @page { size: A4 landscape; margin: 0; }
   .cert-sheet {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
     border-radius: 0 !important;
   }
-  /* Saat sertifikat terbuka, hanya sertifikat yang ikut tercetak. */
-  body:has(.cert-sheet) .report-sheet { display: none !important; }
+
+  /* Sertifikat digambar 1123x794 lalu diperkecil dengan scale() agar pas di
+     layar. Saat dicetak skala itu harus dilepas, kalau tidak hasilnya menyisakan
+     margin dan sisa ruang yang mendorong keluar halaman kedua. */
+  .cert-wrap { display: block !important; margin: 0 !important; padding: 0 !important; }
+  .cert-fit { width: 1123px !important; max-width: none !important; margin: 0 !important; height: auto !important; overflow: visible !important; }
+  .cert-scale {
+    width: 1123px !important;
+    height: 794px !important;
+    transform: none !important;
+    border-radius: 0 !important;
+    overflow: hidden !important;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+  /* Pembungkus layar (Page) menambah padding dan lebar maksimum yang tidak
+     muat di kertas: dilepas hanya di layar Laporan Dampak. */
+  body:has(.cert-sheet) .page-shell { min-height: 0 !important; }
+  body:has(.cert-sheet) .page-main {
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
 }
 
 .btn-dark {

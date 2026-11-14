@@ -186,10 +186,15 @@ export async function buildImpactReport({
     console.warn('Panggilan LLM ringkasan laporan gagal atau timeout, memakai template cadangan.', err)
   }
 
+  // Tanggal dikunci ke saat misi dirancang, bukan saat laporan dibuka. Kalau
+  // memakai hari ini, sertifikat yang dibuka minggu depan akan bertanggal
+  // berbeda dari sertifikat yang dibuka hari ini.
+  const tanggalMisi = new Date(mission.createdAt || Date.now())
+
   return {
     userName: userName || '',
     missionName: `Misi ${mission.usaha}`,
-    date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+    date: tanggalMisi.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
     business: mission.lokasi ? `${mission.usaha}, ${mission.lokasi}` : mission.usaha,
     summary,
     provenSkills: mission.skills || [],
@@ -197,7 +202,7 @@ export async function buildImpactReport({
     ownerPermissionGranted: mission.ownerPermissionGranted,
     strengthenedPotential: potentialName || '',
     nextSteps: mission.roadmap.map((s) => s.title),
-    nomorSertifikat: buatNomorSertifikat(mission, new Date()),
+    nomorSertifikat: buatNomorSertifikat(mission, tanggalMisi),
     usedFallback,
   }
 }

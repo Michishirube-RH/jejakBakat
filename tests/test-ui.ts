@@ -503,18 +503,19 @@ await test('misi tersimpan di localStorage dan dipakai Detail misi', async () =>
   assert(!t.includes('Bu Sari') && !t.includes('Kopi Tetangga'), 'nama bawaan muncul di detail misi')
 })
 
-await test('laporan dampak memakai UMKM dan status izin, tanpa data bawaan', async () => {
+await test('layar Laporan Dampak langsung menampilkan sertifikat', async () => {
   await cdp.eval(`(() => {
     const s = JSON.parse(localStorage.getItem('jejakbakat:v2'));
-    s.screen = 'report';
+    s.screen = 'report'; s.userName = 'Rian Pratama';
     localStorage.setItem('jejakbakat:v2', JSON.stringify(s));
   })()`)
   await cdp.goto(BASE)
-  await cdp.waitFor('document.body.innerText.includes("Laporan Dampak")', 30000)
+  await cdp.waitFor('!!document.querySelector(\'[data-sertifikat="true"]\')', 30000)
   const t = await cdp.text()
-  assert(t.includes('Warung Uji Manual'), 'laporan tidak memakai UMKM')
-  assert(t.includes('Izin pemilik'), 'status izin tidak ada di verifikasi')
-  assert(!t.includes('Bu Sari') && !t.includes('Kopi Tetangga'), 'nama bawaan muncul di laporan')
+  assert(t.includes('Laporan Dampak'), 'judul layar tidak ada')
+  assert(t.includes('Warung Uji Manual'), 'sertifikat tidak memakai UMKM')
+  assert(t.includes('Izin pemilik'), 'status izin tidak ada')
+  assert(!t.includes('Bu Sari') && !t.includes('Kopi Tetangga'), 'nama bawaan muncul di sertifikat')
   assert(!t.includes('sampleTestimonial'), 'data bawaan bocor')
 })
 
@@ -524,39 +525,64 @@ await test('laporan dampak memakai UMKM dan status izin, tanpa data bawaan', asy
 
 console.log('\n6. Sertifikat Laporan Dampak')
 
-await test('tombol "Lihat sertifikat" membuka sertifikat', async () => {
-  await cdp.eval(`(() => {
-    const s = JSON.parse(localStorage.getItem('jejakbakat:v2'));
-    s.screen = 'report'; s.userName = 'Rian Pratama';
-    localStorage.setItem('jejakbakat:v2', JSON.stringify(s));
+await test('lembar laporan lama sudah tidak ada', async () => {
+  const t = await cdp.text()
+  assert(!t.includes('Ringkasan misi'), 'ringkasan misi masih tampil')
+  assert(!t.includes('Langkah yang diselesaikan'), 'daftar langkah masih tampil')
+  assert(!t.includes('Saran langkah berikutnya'), 'saran langkah masih tampil')
+  const tombol = await cdp.eval<string[]>(`[...document.querySelectorAll('button')].map(b => b.textContent.trim())`)
+  assert(!tombol.some((x) => /Lihat sertifikat/i.test(x)), 'tombol "Lihat sertifikat" masih nyangkut')
+  assert(!tombol.some((x) => /^Unduh PDF$/i.test(x)), 'tombol "Unduh PDF" lama masih nyangkut')
+  assert(tombol.some((x) => /Unduh sertifikat/i.test(x)), 'tombol unduh sertifikat tidak ada')
+})
+
+await test('input nama ada di layar sertifikat, bukan di lembar terpisah', async () => {
+  const n = await cdp.eval<number>(`(() => {
+    const labels = [...document.querySelectorAll('label')].map(l => l.textContent || '');
+    return labels.filter(x => /Nama kamu/.test(x)).length;
   })()`)
-  await cdp.goto(BASE)
-  await cdp.waitFor('document.body.innerText.includes("Laporan Dampak")', 30000)
-  const ok = await cdp.clickText('Lihat sertifikat')
-  assert(ok, 'tombol Lihat sertifikat tidak ada')
-  await cdp.waitFor('!!document.querySelector(\'[data-sertifikat="true"]\')', 8000)
+  assert(n === 1, `input "Nama kamu" harus tepat 1, dapat ${n}`)
+})
+
+await test('mengubah nama langsung mengubah nama di sertifikat', async () => {
+  const hasil = await cdp.eval<string>(`(() => {
+    const el = [...document.querySelectorAll('label')].find(l => /Nama kamu/.test(l.textContent)).querySelector('input');
+    Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set.call(el, 'Sari Dewi');
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    return document.querySelector('[data-sertifikat="true"] .cert-nama').innerText.trim();
+  })()`)
+  assert(hasil === 'Sari Dewi', `nama di sertifikat tidak ikut berubah: "${hasil}"`)
+})
+
+await test('tanggal sertifikat dikunci ke tanggal misi, bukan hari ini', async () => {
+  // Misi contoh dibuat jauh di masa lalu; tanggal sertifikat harus ikut.
+  const tanggal = await cdp.eval<string>(`(() => {
+    const s = JSON.parse(localStorage.getItem('jejakbakat:v2'));
+    return new Date(s.mission.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+  })()`)
+  const teks = await cdp.eval<string>(`document.querySelector('[data-sertifikat="true"]').innerText`)
+  assert(teks.includes(tanggal), `tanggal misi ${tanggal} tidak ada di sertifikat`)
 })
 
 await test('sertifikat memuat nama, UMKM, dan nomor yang sah', async () => {
   // innerText mengikuti text-transform, jadi judulnya terbaca "SERTIFIKAT".
+  // Nama peserta sudah diganti "Sari Dewi" oleh tes sebelumnya.
   const t = await cdp.eval<string>(`document.querySelector('[data-sertifikat="true"]').innerText`)
   assert(/sertifikat/i.test(t), 'judul Sertifikat tidak ada')
   assert(/laporan dampak/i.test(t), 'subjudul Laporan Dampak tidak ada')
-  assert(t.includes('Rian Pratama'), 'nama peserta tidak tampil')
+  assert(t.includes('Sari Dewi'), 'nama peserta tidak tampil')
   assert(t.includes('Warung Uji Manual'), 'nama UMKM tidak tampil')
   assert(/JB-\d{4}-[0-9A-F]{4}-[0-9A-F]{4}/.test(t), `nomor sertifikat tidak sah: ${t}`)
   assert(!t.includes('Bu Sari') && !t.includes('Kopi Tetangga'), 'nama bawaan muncul di sertifikat')
 })
 
-await test('nomor sertifikat stabil setelah muat ulang', async () => {
-  const ambil = `document.querySelector('[data-sertifikat="true"]').innerText.match(/JB-\\d{4}-[0-9A-F]{4}-[0-9A-F]{4}/)[0]`
+await test('nomor dan tanggal sertifikat stabil setelah muat ulang', async () => {
+  const ambil = `(() => { const t = document.querySelector('[data-sertifikat="true"]').innerText; return t.match(/JB-\\d{4}-[0-9A-F]{4}-[0-9A-F]{4}/)[0] + '|' + t.match(/pada ([^—]+)—/)[1].trim(); })()`
   const pertama = await cdp.eval<string>(ambil)
-  await cdp.clickText('Kembali ke laporan')
-  await cdp.waitFor('document.body.innerText.includes("Ringkasan misi")', 20000)
-  await cdp.clickText('Lihat sertifikat')
-  await cdp.waitFor('!!document.querySelector(\'[data-sertifikat="true"]\')', 8000)
+  await cdp.goto(BASE)
+  await cdp.waitFor('!!document.querySelector(\'[data-sertifikat="true"]\')', 30000)
   const kedua = await cdp.eval<string>(ambil)
-  assert(pertama === kedua, `nomor berubah: ${pertama} -> ${kedua}`)
+  assert(pertama === kedua, `nomor/tanggal berubah: ${pertama} -> ${kedua}`)
 })
 
 await test('kanvas tanda tangan tersedia untuk peserta dan penerbit', async () => {
@@ -597,9 +623,44 @@ await test('sertifikat rapi di 390 px (tanpa scroll horizontal)', async () => {
   assert(overflow <= 1, `ada scroll horizontal: ${overflow}px`)
 })
 
-await test('tombol kembali mengembalikan lembar laporan', async () => {
-  await cdp.clickText('Kembali ke laporan')
-  await cdp.waitFor('document.body.innerText.includes("Ringkasan misi")', 20000)
+await test('tombol Perbesar memperbesar sertifikat dan bisa digeser', async () => {
+  // Kembali ke layar Laporan Dampak bila tes sebelumnya berpindah layar.
+  await cdp.goto(BASE)
+  await cdp.waitFor('!!document.querySelector(\'.cert-scale\')', 30000)
+  await new Promise((r) => setTimeout(r, 600))
+
+  const baca = `(() => {
+    const s = document.querySelector('.cert-scale');
+    const f = document.querySelector('.cert-fit');
+    return {
+      skala: parseFloat(window.getComputedStyle(s).transform.split('(')[1]),
+      bisaGeser: f.scrollWidth > f.clientWidth + 2,
+    };
+  })()`
+
+  const sebelum = await cdp.eval<any>(baca)
+  assert(!sebelum.bisaGeser, 'sertifikat sudah bisa digeser sebelum diperbesar')
+
+  const ok = await cdp.eval<boolean>(`(() => { const b = [...document.querySelectorAll('button')].find(x => /Perbesar/.test(x.textContent)); if (!b) return false; b.click(); return true })()`)
+  assert(ok, 'tombol Perbesar tidak ada')
+  await new Promise((r) => setTimeout(r, 700))
+
+  const sesudah = await cdp.eval<any>(baca)
+  assert(sesudah.skala > sebelum.skala + 0.1, `skala tidak bertambah: ${sebelum.skala} -> ${sesudah.skala}`)
+  assert(sesudah.bisaGeser, 'setelah diperbesar sertifikat tidak bisa digeser')
+
+  // Halaman tetap tidak boleh melebar; geseran hanya di dalam pembungkusnya.
+  const overflow = await cdp.eval<number>('document.documentElement.scrollWidth - window.innerWidth')
+  assert(overflow <= 1, `halaman jadi melebar: ${overflow}px`)
+
+  const balik = await cdp.eval<boolean>(`(() => { const b = [...document.querySelectorAll('button')].find(x => /Perkecil/.test(x.textContent)); if (!b) return false; b.click(); return true })()`)
+  assert(balik, 'tombol Perkecil tidak ada setelah diperbesar')
+})
+
+await test('tombol kembali ke ruang kerja berfungsi', async () => {
+  const ok = await cdp.clickText('Kembali ke ruang kerja')
+  assert(ok, 'tombol Kembali ke ruang kerja tidak ada')
+  await cdp.waitFor('document.body.innerText.includes("Tugas langkah")', 20000)
   const ada = await cdp.eval<boolean>('!!document.querySelector(\'[data-sertifikat="true"]\')')
   assert(!ada, 'sertifikat masih tampil setelah kembali')
 })
@@ -608,7 +669,7 @@ await test('tombol kembali mengembalikan lembar laporan', async () => {
 /* 7. Semua layar bersih dari nama bawaan                              */
 /* ================================================================== */
 
-console.log('\n6. Pemeriksaan akhir')
+console.log('\n7. Pemeriksaan akhir')
 
 await test('Beranda bersih dari nama usaha bawaan', async () => {
   await cdp.goto(BASE)

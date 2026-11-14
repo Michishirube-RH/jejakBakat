@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Download, Type } from 'lucide-react'
 import type { AppState } from '../lib'
+import { cx } from '../lib'
 import type { ImpactReportData } from '../ai/mentor'
 import { TandaTangan } from './TandaTangan'
 
@@ -102,48 +103,71 @@ function Medali({ size = 74 }: { size?: number }) {
 export function Sertifikat({ state, rep, patch }: Props) {
   const wrap = useRef<HTMLDivElement | null>(null)
   const [zoom, setZoom] = useState(1)
+  /** true bila pengguna memperbesar sertifikat agar bisa dibaca di ponsel. */
+  const [perbesar, setPerbesar] = useState(false)
 
   /**
    * Sertifikat digambar pada ukuran tetap 1123x794 (A4 landscape @96dpi),
    * lalu diperkecil agar pas di layar. Dengan begitu tata letaknya tidak
    * berubah-ubah dan hasil cetaknya selalu sama.
+   *
+   * Di ponsel skala itu membuat teks sangat kecil, jadi ada tombol perbesar:
+   * sertifikat ditampilkan dengan skala lebih besar dan pengguna bisa
+   * menggeser. Hasil cetak tidak terpengaruh.
+   *
+   * Pembungkusnya diberi tinggi = 794 x skala. Tanpa itu, sisa ruang dari
+   * elemen yang di-scale tetap memakan tempat setinggi 794 px asli.
    */
   useEffect(() => {
     const el = wrap.current
     if (!el) return
-    const fit = () => setZoom(Math.min(1, (el.clientWidth - 2) / 1123))
+    const fit = () => {
+      const lebar = el.clientWidth
+      if (!lebar) return
+      const pas = Math.min(1, (lebar - 2) / 1123)
+      // Saat diperbesar, minimal 0.55 supaya teks terbaca; pengguna menggeser.
+      setZoom(perbesar ? Math.max(pas, 0.55) : pas)
+    }
     fit()
     const ro = new ResizeObserver(fit)
     ro.observe(el)
-    return () => ro.disconnect()
-  }, [])
+    // Font web bisa selesai dimuat setelah pengukuran pertama; ukur ulang.
+    document.fonts?.ready.then(fit).catch(() => { /* abaikan */ })
+    window.addEventListener('resize', fit)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', fit)
+    }
+  }, [perbesar])
 
   const nama = state.userName.trim() || 'Nama Peserta'
-  const perluNama = !state.userName.trim()
+  // Tombol perbesar hanya berguna kalau sertifikat memang mengecil di layar.
+  const bisaPerbesar = Math.min(1, ((wrap.current?.clientWidth ?? 1123) - 2) / 1123) < 0.9
 
   return (
-    <div className="flex flex-col gap-4">
-      {/* Perintah di luar sertifikat, tidak ikut tercetak */}
-      <div className="no-print mx-auto flex w-full max-w-[1123px] flex-wrap items-center gap-3">
-        <button className="btn-primary" onClick={() => window.print()}>
-          <Download size={18} strokeWidth={1.75} aria-hidden />
-          Unduh sertifikat (PDF)
-        </button>
-        <p className="text-sm text-muted">
-          Pilih <strong>Landscape</strong> dan matikan <strong>Headers and footers</strong> saat menyimpan PDF.
-        </p>
-      </div>
-
-      {perluNama && (
-        <p className="no-print mx-auto w-full max-w-[1123px] rounded-2xl bg-[#fff4e5] px-4 py-3 text-sm text-[#8a4b08] ring-1 ring-[#f3d9b5]">
-          Nama peserta masih kosong. Isi dulu di lembar laporan agar sertifikat tidak menampilkan nama contoh.
-        </p>
+    <div className="cert-wrap flex flex-col gap-4">
+      {bisaPerbesar && (
+        <div className="no-print mx-auto flex w-full max-w-[1123px] justify-end">
+          <button
+            type="button"
+            className="chip"
+            aria-pressed={perbesar}
+            onClick={() => setPerbesar((v) => !v)}
+            onMouseDown={(e) => e.preventDefault()}
+          >
+            {perbesar ? 'Perkecil' : 'Perbesar'}
+          </button>
+        </div>
       )}
-
-      <div ref={wrap} className="mx-auto w-full max-w-[1123px]">
+      <div
+        ref={wrap}
+        className={cx('cert-fit mx-auto w-full max-w-[1123px]', perbesar && 'overflow-x-auto')}
+        data-perbesar={perbesar ? 'true' : 'false'}
+        style={{ height: Math.round(794 * zoom) }}
+      >
         <div
           style={{ width: 1123, height: 794, transform: `scale(${zoom})`, transformOrigin: 'top left' }}
-          className="relative overflow-hidden rounded-2xl"
+          className="cert-scale relative overflow-hidden rounded-2xl"
         >
           {/* Kertas sertifikat */}
           <div data-sertifikat="true" className="cert-sheet relative h-full w-full overflow-hidden text-white">
@@ -275,6 +299,15 @@ export function Sertifikat({ state, rep, patch }: Props) {
           Sertifikat ini adalah penghargaan dan portofolio. Keabsahannya dapat dikonfirmasi ke UMKM yang
           bersangkutan, tidak diverifikasi oleh sistem.
         </p>
+        <div className="flex flex-wrap items-center gap-3 md:col-span-2">
+          <button className="btn-primary" onClick={() => window.print()}>
+            <Download size={18} strokeWidth={1.75} aria-hidden />
+            Unduh sertifikat (PDF)
+          </button>
+          <p className="text-xs text-muted">
+            Pilih <strong>Landscape</strong> dan matikan <strong>Headers and footers</strong> saat menyimpan PDF.
+          </p>
+        </div>
       </div>
     </div>
   )

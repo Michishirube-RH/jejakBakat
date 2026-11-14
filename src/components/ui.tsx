@@ -28,8 +28,8 @@ export function FallbackLabel({ show, className = '' }: { show: boolean; classNa
 
 export function Page({ children, narrow = true, bottomBar }: { children: ReactNode; narrow?: boolean; bottomBar?: ReactNode }) {
   return (
-    <div className="min-h-screen">
-      <main className={cx('mx-auto px-5 pt-4', narrow ? 'max-w-[520px]' : 'max-w-[1040px]', bottomBar ? 'pb-36' : 'pb-16')}>{children}</main>
+    <div className="page-shell min-h-screen">
+      <main className={cx('page-main mx-auto px-5 pt-4', narrow ? 'max-w-[520px]' : 'max-w-[1040px]', bottomBar ? 'pb-36' : 'pb-16')}>{children}</main>
       {bottomBar}
     </div>
   )
