@@ -15,6 +15,8 @@ import {
   normalizeFeature,
   checkRateLimit,
   resetRateLimit,
+  retryAfterSec,
+  RATE_LIMIT,
   _clearPlacesCache,
   _placesCacheSize,
   categoryLabelFor,
@@ -451,14 +453,14 @@ await test('hasil duplikat (nama+alamat sama) dibuang', async () => {
 
 section('4. Pembatas laju per IP')
 
-await test('20 permintaan diizinkan, ke-21 ditolak', () => {
+await test(`${RATE_LIMIT} permintaan diizinkan, ke-${RATE_LIMIT + 1} ditolak`, () => {
   resetRateLimit()
   const ip = '10.0.0.9'
   const t = Date.now()
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < RATE_LIMIT; i++) {
     assert.equal(checkRateLimit(ip, t + i), true, `permintaan ke-${i + 1} seharusnya diizinkan`)
   }
-  assert.equal(checkRateLimit(ip, t + 20), false, 'permintaan ke-21 seharusnya ditolak')
+  assert.equal(checkRateLimit(ip, t + RATE_LIMIT), false, `permintaan ke-${RATE_LIMIT + 1} seharusnya ditolak`)
 })
 
 await test('IP lain tidak terpengaruh', () => {
@@ -472,19 +474,30 @@ await test('jendela 1 menit: permintaan lama tidak lagi dihitung', () => {
   resetRateLimit()
   const ip = '10.0.0.3'
   const t = Date.now()
-  for (let i = 0; i < 20; i++) checkRateLimit(ip, t)
+  for (let i = 0; i < RATE_LIMIT; i++) checkRateLimit(ip, t)
   assert.equal(checkRateLimit(ip, t + 30 * 1000), false)
   assert.equal(checkRateLimit(ip, t + 61 * 1000), true, 'setelah 1 menit kuota pulih')
+})
+
+await test('Retry-After memberi sisa waktu tunggu yang masuk akal', () => {
+  resetRateLimit()
+  const ip = '10.0.0.4'
+  const t = Date.now()
+  for (let i = 0; i < RATE_LIMIT; i++) checkRateLimit(ip, t)
+  const sisa = retryAfterSec(ip, t + 10 * 1000)
+  assert.equal(sisa >= 1 && sisa <= 60, true, `sisa harus 1..60 detik, dapat ${sisa}`)
+  assert.equal(retryAfterSec('10.0.0.99', t), 0, 'IP tanpa riwayat tidak perlu menunggu')
 })
 
 await test('handler mengembalikan 429 saat kuota habis', async () => {
   resetRateLimit()
   const ip = '10.9.9.9'
   const t = Date.now()
-  for (let i = 0; i < 20; i++) checkRateLimit(ip, t)
+  for (let i = 0; i < RATE_LIMIT; i++) checkRateLimit(ip, t)
   const res = await handlePlacesRequest({}, { apiKey: '', ip, now: t + 10 })
   assert.equal(res.status, 429)
   assert.equal(res.body.error, 'RATE_LIMITED')
+  assert.equal(typeof res.headers?.['Retry-After'], 'string', '429 harus membawa header Retry-After')
 })
 
 /* ================================================================== */

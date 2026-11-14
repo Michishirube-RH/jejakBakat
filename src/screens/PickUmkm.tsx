@@ -16,7 +16,7 @@ type P = { state: AppState; patch: (p: Partial<AppState>) => void; reset: () => 
 /** Pusat cadangan bila pengguna tidak mengizinkan lokasi: Padang. */
 const PADANG = { lat: -0.9471, lon: 100.3543 }
 
-type Status = 'idle' | 'locating' | 'loading' | 'ready' | 'empty' | 'error' | 'nokey'
+type Status = 'idle' | 'locating' | 'loading' | 'ready' | 'empty' | 'error' | 'nokey' | 'limited'
 
 /** ID UMKM yang stabil dan tidak bergantung pada nama. */
 function makeId(prefix: string): string {
@@ -37,6 +37,11 @@ export function PickUmkm({ state, patch }: P) {
   const abortRef = useRef<AbortController | null>(null)
   /** Menandai apakah pengguna sudah menyetujui pemakaian lokasi. */
   const [locationAllowed, setLocationAllowed] = useState(false)
+  /**
+   * Sisa detik sebelum batas pencarian per IP mengendur lagi.
+   * 0 berarti tidak sedang dibatasi.
+   */
+  const [waitSec, setWaitSec] = useState(0)
 
   // ---- Tab manual ----
   const [name, setName] = useState('')
@@ -61,6 +66,7 @@ export function PickUmkm({ state, patch }: P) {
     setMessage('')
     setResults([])
     setPickedId(null)
+    setWaitSec(0)
 
     let coords: { lat: number; lon: number } | null = null
 
@@ -95,6 +101,15 @@ export function PickUmkm({ state, patch }: P) {
         setMessage(data.message || 'Pencarian lokasi belum tersedia. Tambahkan usahamu sendiri.')
         return
       }
+      if (res.status === 429) {
+        // Batas per IP tercapai. Server mengirim berapa detik harus menunggu;
+        // bila tidak ada, pakai 60 detik (satu jendela penuh).
+        const retry = Number(res.headers.get('Retry-After')) || 60
+        setStatus('limited')
+        setMessage(data.message || 'Terlalu banyak permintaan. Coba lagi sebentar.')
+        setWaitSec(Number.isFinite(retry) && retry > 0 ? Math.ceil(retry) : 60)
+        return
+      }
       if (!res.ok) {
         setStatus('error')
         setMessage(data.message || 'Pencarian gagal. Coba lagi atau tambahkan usaha sendiri.')
@@ -121,6 +136,25 @@ export function PickUmkm({ state, patch }: P) {
     return () => abortRef.current?.abort()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  /**
+   * Hitung mundur saat kena batas laju. Setiap detik angkanya turun; ketika
+   * mencapai nol, pencarian diulang otomatis sehingga layar pulih sendiri
+   * tanpa pengguna perlu menekan apa pun.
+   */
+  useEffect(() => {
+    if (waitSec <= 0) return
+    const t = setTimeout(() => setWaitSec((s) => Math.max(0, s - 1)), 1000)
+    return () => clearTimeout(t)
+  }, [waitSec])
+
+  // Saat waktu tunggu habis, coba lagi sekali. Bila server masih menolak,
+  // cabang 429 akan memasang hitung mundur baru dengan sisa waktu sebenarnya.
+  useEffect(() => {
+    if (waitSec !== 0 || status !== 'limited') return
+    search({ withLocation: false, radius: radiusKm })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [waitSec, status])
 
   const ubahRadius = (r: number) => {
     setRadiusKm(r)
@@ -252,6 +286,26 @@ export function PickUmkm({ state, patch }: P) {
             <div role="status" className="sheet mt-4 flex items-center gap-3 p-6 text-muted">
               <Loader2 size={20} className="animate-spin" aria-hidden />
               {status === 'locating' ? 'Membaca lokasimu...' : 'Mencari usaha di sekitar...'}
+            </div>
+          )}
+
+          {status === 'limited' && (
+            <div role="status" data-limited="true" className="sheet mt-4 flex flex-col gap-3 p-6">
+              <p className="flex items-start gap-2">
+                <AlertCircle size={20} strokeWidth={1.75} className="mt-0.5 flex-none text-[#c2410c]" aria-hidden />
+                <span>
+                  {message}{' '}
+                  <strong className="whitespace-nowrap">Coba lagi dalam {waitSec} detik.</strong>
+                </span>
+              </p>
+              <p className="text-sm text-muted">
+                Pencarian akan jalan sendiri setelah hitungan selesai. Kamu juga bisa pilih tab{' '}
+                <strong>Tambah sendiri</strong> sekarang.
+              </p>
+              <button className="btn-primary self-start" onClick={() => setTab('manual')}>
+                <Plus size={18} strokeWidth={2} />
+                Tambah sendiri
+              </button>
             </div>
           )}
 

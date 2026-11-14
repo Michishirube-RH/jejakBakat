@@ -62,6 +62,9 @@ function viteAiApiPlugin(): Plugin {
         })
         res.statusCode = result.status
         res.setHeader('Content-Type', 'application/json')
+        // Teruskan header tambahan (mis. Retry-After saat kena batas laju),
+        // supaya browser bisa menghitung mundur dengan tepat.
+        for (const [k, v] of Object.entries(result.headers ?? {})) res.setHeader(k, v)
         res.end(JSON.stringify(result.body))
       } catch (err: any) {
         res.statusCode = 500

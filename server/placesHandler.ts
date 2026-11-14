@@ -18,6 +18,8 @@ export type { PlaceResult }
 
 export interface PlacesResponse {
   status: number
+  /** Header respons tambahan, misalnya Retry-After saat kena batas laju. */
+  headers?: Record<string, string>
   body: {
     results?: PlaceResult[]
     center?: { lat: number; lon: number; source: 'user' | 'default' }
@@ -403,8 +405,15 @@ export function _placesCacheSize() {
 /* Pembatas laju sederhana per IP                                      */
 /* ------------------------------------------------------------------ */
 
-const RATE_LIMIT = 20
-const RATE_WINDOW_MS = 60 * 1000
+/**
+ * Batas pencarian per IP per menit.
+ *
+ * Angka ini melindungi kuota Geoapify, bukan membatasi pemakaian wajar:
+ * pemilihan UMKM biasanya hanya butuh 2-3 pencarian. 60 memberi ruang
+ * untuk mengulang alur (misalnya saat merekam demo) tanpa menghabiskan kuota.
+ */
+export const RATE_LIMIT = 60
+export const RATE_WINDOW_MS = 60 * 1000
 const hits = new Map<string, number[]>()
 
 /** Mengembalikan true bila permintaan masih diizinkan. */
@@ -422,6 +431,18 @@ export function checkRateLimit(ip: string, now = Date.now()): boolean {
 export function resetRateLimit(ip?: string) {
   if (ip) hits.delete(ip)
   else hits.clear()
+}
+
+/**
+ * Sisa detik sampai jatah IP ini terbuka lagi.
+ * Dipakai untuk header Retry-After agar UI bisa menghitung mundur dengan tepat.
+ */
+export function retryAfterSec(ip: string, now = Date.now()): number {
+  const list = (hits.get(ip) ?? []).filter((t) => now - t < RATE_WINDOW_MS)
+  if (list.length === 0) return 0
+  // Jatah terbuka saat hit tertua keluar dari jendela waktu.
+  const oldest = Math.min(...list)
+  return Math.max(1, Math.ceil((RATE_WINDOW_MS - (now - oldest)) / 1000))
 }
 
 /* ------------------------------------------------------------------ */
@@ -455,6 +476,7 @@ export async function handlePlacesRequest(
   if (opts.ip && !checkRateLimit(opts.ip, now)) {
     return {
       status: 429,
+      headers: { 'Retry-After': String(retryAfterSec(opts.ip, now)) },
       body: { error: 'RATE_LIMITED', message: 'Terlalu banyak permintaan. Coba lagi sebentar.' },
     }
   }

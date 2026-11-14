@@ -520,15 +520,15 @@ await test('teks privasi menyebut AI dan lokasi kasar', async () => {
 console.log('\n7. Jalur galat server')
 
 await test('bila pencarian gagal, muncul pesan + arah ke Tambah sendiri', async () => {
-  // Memakai jalur galat nyata dari server: lewati batas 20 permintaan per menit,
-  // lalu server menjawab 429. Dijalankan paling akhir agar kuota rate limit
-  // tidak mengganggu tes pencarian lain.
-  const { resetRateLimit } = await import('../server/placesHandler.ts')
+  // Memakai jalur galat nyata dari server: lewati batas RATE_LIMIT permintaan
+  // per menit, lalu server menjawab 429. Dijalankan paling akhir agar kuota
+  // rate limit tidak mengganggu tes pencarian lain.
+  const { resetRateLimit, RATE_LIMIT } = await import('../server/placesHandler.ts')
   resetRateLimit()
 
   let lastStatus = 0
   let lastMessage = ''
-  for (let i = 0; i < 25; i++) {
+  for (let i = 0; i < RATE_LIMIT + 5; i++) {
     const r = await fetch(`${BASE}/api/places`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -553,6 +553,11 @@ await test('bila pencarian gagal, muncul pesan + arah ke Tambah sendiri', async 
   await cdp.waitFor('document.body.innerText.includes("Terlalu banyak permintaan")', 15000)
   const t = await cdp.text()
   assert(t.includes('Tambah sendiri'), 'tidak mengarahkan ke Tambah sendiri')
+  // Saat kena batas, layar harus menyebut sisa waktu tunggu, bukan "Pencarian gagal".
+  assert(
+    /\d+\s*detik/.test(t),
+    'tidak ada hitung mundur saat kena batas laju',
+  )
 
   resetRateLimit()
 })

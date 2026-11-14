@@ -61,12 +61,13 @@ export default async function handler(req: any, res: any) {
   if (res?.setHeader) {
     res.statusCode = result.status
     res.setHeader('Content-Type', 'application/json')
+    for (const [k, v] of Object.entries(result.headers ?? {})) res.setHeader(k, v)
     res.end(JSON.stringify(result.body))
     return
   }
 
   return new Response(JSON.stringify(result.body), {
     status: result.status,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', ...(result.headers ?? {}) },
   })
 }
