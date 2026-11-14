@@ -1,0 +1,10 @@
+{
+  "description": "A web app designed to present the attached content, helping users quickly explore its information and find what they need.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
