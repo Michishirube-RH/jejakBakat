@@ -36,13 +36,50 @@ function viteAiApiPlugin(): Plugin {
     })
   }
 
+  const placesHandler = async (req: any, res: any) => {
+    if (req.method !== 'POST') {
+      res.statusCode = 405
+      res.setHeader('Content-Type', 'application/json')
+      res.end(JSON.stringify({ error: 'Method Not Allowed' }))
+      return
+    }
+    let body = ''
+    req.on('data', (chunk: any) => {
+      body += chunk
+    })
+    req.on('end', async () => {
+      try {
+        const payload = JSON.parse(body || '{}')
+        const ip =
+          (req.headers['x-forwarded-for'] as string | undefined)?.split(',')[0]?.trim() ||
+          req.socket?.remoteAddress ||
+          'unknown'
+        const handlerUrl = pathToFileURL(path.resolve(process.cwd(), 'server/placesHandler.ts')).href
+        const { handlePlacesRequest } = await import(handlerUrl)
+        const result = await handlePlacesRequest(payload, {
+          apiKey: process.env.GEOAPIFY_API_KEY,
+          ip,
+        })
+        res.statusCode = result.status
+        res.setHeader('Content-Type', 'application/json')
+        res.end(JSON.stringify(result.body))
+      } catch (err: any) {
+        res.statusCode = 500
+        res.setHeader('Content-Type', 'application/json')
+        res.end(JSON.stringify({ error: err.message || 'Internal Server Error' }))
+      }
+    })
+  }
+
   return {
     name: 'vite-ai-api-plugin',
     configureServer(server) {
       server.middlewares.use('/api/ai', handler)
+      server.middlewares.use('/api/places', placesHandler)
     },
     configurePreviewServer(server) {
       server.middlewares.use('/api/ai', handler)
+      server.middlewares.use('/api/places', placesHandler)
     },
   }
 }

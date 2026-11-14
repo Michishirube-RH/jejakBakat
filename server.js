@@ -59,7 +59,35 @@ const server = http.createServer(async (req, res) => {
     return
   }
 
-  // 2. Static File Serving from dist/
+  // 2. API Route: /api/places
+  if (url.pathname === '/api/places' && req.method === 'POST') {
+    let body = ''
+    req.on('data', (chunk) => {
+      body += chunk
+    })
+    req.on('end', async () => {
+      try {
+        const payload = JSON.parse(body || '{}')
+        const ip =
+          String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() ||
+          req.socket?.remoteAddress ||
+          'unknown'
+        const { handlePlacesRequest } = await import('./server/placesHandler.ts')
+        const response = await handlePlacesRequest(payload, {
+          apiKey: process.env.GEOAPIFY_API_KEY,
+          ip,
+        })
+        res.writeHead(response.status, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify(response.body))
+      } catch (err) {
+        res.writeHead(500, { 'Content-Type': 'application/json' })
+        res.end(JSON.stringify({ error: err.message || 'Internal Server Error' }))
+      }
+    })
+    return
+  }
+
+  // 3. Static File Serving from dist/
   let filePath = path.join(DIST, url.pathname)
   if (!fs.existsSync(filePath) || fs.statSync(filePath).isDirectory()) {
     filePath = path.join(DIST, 'index.html')
