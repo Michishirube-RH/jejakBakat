@@ -12,9 +12,9 @@ const cats = [
   { icon: Compass, label: 'Organisasi' }, { icon: Heart, label: 'Empati' }, { icon: Code2, label: 'Teknologi' },
 ]
 
-function Feature({ title, body, bg, flip, children }: { title: string; body: string; bg: string; flip?: boolean; children: ReactNode }) {
+function Feature({ title, body, bg, flip, id, children }: { title: string; body: string; bg: string; flip?: boolean; id?: string; children: ReactNode }) {
   return (
-    <section className={bg}>
+    <section id={id} className={cx(bg, id && 'scroll-mt-24')}>
       <div className={cx('mx-auto grid max-w-[1200px] items-center gap-10 px-5 py-16 md:grid-cols-2 md:gap-16 md:py-24')}>
         <div className={cx('flex justify-center', flip ? 'md:order-2' : 'md:order-1')}>{children}</div>
         <div className={cx(flip ? 'md:order-1' : 'md:order-2', 'md:max-w-[420px]')}>
@@ -68,7 +68,7 @@ export function Welcome({ state, patch, reset }: P) {
         </ul>
       </div>
 
-      <section className="grid-dark text-white">
+      <section id="tentang" className="grid-dark text-white scroll-mt-24">
         <div className="mx-auto max-w-[1200px] px-5 py-16 text-center md:py-20">
           <h2 className="text-[36px] leading-[1.1] md:text-[48px]">Dari jawaban singkat sampai bukti nyata</h2>
           <dl className="mt-10 grid gap-8 sm:grid-cols-3">
@@ -88,7 +88,7 @@ export function Welcome({ state, patch, reset }: P) {
         </svg>
       </Feature>
 
-      <Feature bg="bg-gradient-to-b from-[#f3efff] to-white" flip title="Sesuai levelmu" body="Mulai dari 10 pertanyaan, lanjut ke misi yang cocok dengan potensi teratasmu, mulai dari yang mudah.">
+      <Feature id="cara-kerja" bg="bg-gradient-to-b from-[#f3efff] to-white" flip title="Sesuai levelmu" body="Mulai dari 10 pertanyaan, lanjut ke misi yang cocok dengan potensi teratasmu, mulai dari yang mudah.">
         <div className="relative h-[320px] w-full max-w-[440px]" aria-hidden>
           <div className="absolute left-0 top-4 w-[62%] rounded-3xl border-2 border-[#7c4dff] bg-white p-5">
             <div className="flex items-center justify-between">
@@ -128,14 +128,14 @@ export function Welcome({ state, patch, reset }: P) {
         <div className="w-full max-w-[360px] rounded-2xl border border-line bg-white p-6"><div className="h-3 w-1/2 rounded bg-ink" /><div className="mt-4 space-y-2"><div className="h-2 rounded bg-line" /><div className="h-2 w-5/6 rounded bg-line" /><div className="h-2 w-2/3 rounded bg-line" /></div><div className="mt-5 rounded-xl bg-[#e8fbee] p-3 text-sm font-medium text-leaf">Diisi oleh pemilik usaha</div></div>
       </Feature>
 
-      <section className="grid-dark text-white">
+      <section id="fitur" className="grid-dark text-white scroll-mt-24">
         <div className="mx-auto max-w-[1200px] px-5 py-16 text-center md:py-20">
           <h2 className="text-[36px] leading-[1.1] md:text-[48px]">Enam kekuatan yang kami baca</h2>
           <ul className="mt-8 flex flex-wrap justify-center gap-x-10 gap-y-3 font-display text-2xl text-white/80">{cats.map((c) => <li key={c.label}>{c.label}</li>)}</ul>
         </div>
       </section>
 
-      <section className="bg-white">
+      <section id="misi-umkm" className="bg-white scroll-mt-24">
         <div className="mx-auto max-w-[1200px] px-5 py-16 text-center md:py-24">
           <h2 className="text-[36px] leading-[1.1] md:text-[48px]">Misi nyata, bukan contoh</h2>
           <p className="mx-auto mt-4 max-w-[62ch] text-lg text-muted">
