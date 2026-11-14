@@ -109,6 +109,11 @@ input[type='range']::-moz-range-thumb { width: 18px; height: 18px; border-radius
     print-color-adjust: exact;
     border-radius: 0 !important;
   }
+  .cert-ttd {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    filter: brightness(0) saturate(100%) invert(84%) sepia(18%) saturate(1512%) hue-rotate(205deg) !important;
+  }
 
   /* Sertifikat digambar 1123x794 lalu diperkecil dengan scale() agar pas di
      layar. Saat dicetak skala itu harus dilepas, kalau tidak hasilnya menyisakan
@@ -132,6 +137,12 @@ input[type='range']::-moz-range-thumb { width: 18px; height: 18px; border-radius
     padding: 0 !important;
     margin: 0 !important;
   }
+}
+
+/* Tanda tangan pada sertifikat: diwarnai lavender terang (#cbb9ff) agar serasi dengan
+   tanda tangan bawaan dan kontras di atas latar sertifikat yang gelap. */
+.cert-ttd {
+  filter: brightness(0) saturate(100%) invert(84%) sepia(18%) saturate(1512%) hue-rotate(205deg);
 }
 
 .btn-dark {

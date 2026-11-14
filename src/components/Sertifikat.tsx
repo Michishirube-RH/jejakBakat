@@ -3,6 +3,7 @@ import { Download, Type } from 'lucide-react'
 import type { AppState } from '../lib'
 import { cx } from '../lib'
 import type { ImpactReportData } from '../ai/mentor'
+import { Logo } from './Logo'
 import { TandaTangan } from './TandaTangan'
 
 /**
@@ -181,10 +182,7 @@ export function Sertifikat({ state, rep, patch }: Props) {
               {/* Kepala: logo + nama aplikasi */}
               <div className="flex items-center gap-3">
                 <span className="grid h-12 w-12 place-items-center rounded-full bg-white/10 ring-1 ring-white/25">
-                  <svg width="26" height="26" viewBox="0 0 24 24" aria-hidden>
-                    <path d="M12 2c3 3.4 4.6 6.5 4.6 9.4a4.6 4.6 0 1 1-9.2 0C7.4 8.5 9 5.4 12 2z" fill="#a78bfa" />
-                    <circle cx="12" cy="12" r="1.9" fill="#14112b" />
-                  </svg>
+                  <Logo className="h-8 w-8" />
                 </span>
                 <span className="text-left text-2xl leading-tight font-semibold">
                   Jejak<span className="text-[#a78bfa]">Bakat</span> AI
@@ -223,9 +221,13 @@ export function Sertifikat({ state, rep, patch }: Props) {
               <div className="mt-auto grid w-full max-w-[880px] grid-cols-3 items-end gap-6 pb-1">
                 <div className="flex flex-col items-center">
                   {state.ttdPeserta ? (
-                    <img src={state.ttdPeserta} alt="Tanda tangan peserta" className="h-[74px] object-contain" />
+                    <img
+                      src={state.ttdPeserta}
+                      alt="Tanda tangan peserta"
+                      className="cert-ttd max-h-[70px] w-full object-contain object-bottom"
+                    />
                   ) : (
-                    <span className="flex h-[74px] items-end pb-1 text-[13px] text-white/40">
+                    <span className="flex h-[70px] items-end pb-1 text-[13px] text-white/40">
                       belum ditandatangani
                     </span>
                   )}
@@ -241,9 +243,13 @@ export function Sertifikat({ state, rep, patch }: Props) {
 
                 <div className="flex flex-col items-center">
                   {state.ttdPenerbit ? (
-                    <img src={state.ttdPenerbit} alt="Tanda tangan penerbit" className="h-[74px] object-contain" />
+                    <img
+                      src={state.ttdPenerbit}
+                      alt="Tanda tangan penerbit"
+                      className="cert-ttd max-h-[70px] w-full object-contain object-bottom"
+                    />
                   ) : (
-                    <span className="flex h-[74px] items-center">
+                    <span className="flex h-[70px] items-center">
                       <svg width="150" height="52" viewBox="0 0 150 52" aria-hidden>
                         <path
                           d="M8 36c10-18 16-4 22-14s10 10 18 2 10 6 18-4 12 12 20 4 14 4 22-6 12 8 20 2"
