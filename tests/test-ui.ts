@@ -317,6 +317,7 @@ await test('pencarian nyata menampilkan hasil dan atribusi', async () => {
   const t = await cdp.text()
   assert(t.includes('© OpenStreetMap contributors dan Geoapify'), 'atribusi tidak ada')
   assert(!t.includes('Indomaret') && !t.includes('Alfamart'), 'jaringan besar ikut tampil')
+  assert(!t.toLowerCase().includes('hokben') && !t.toLowerCase().includes('cfc ambacang'), 'HokBen atau CFC ikut tampil')
   await assertNoLegacy('hasil pencarian')
 })
 
@@ -703,6 +704,11 @@ await test('bila pencarian gagal, muncul pesan + arah ke Tambah sendiri', async 
   // rate limit tidak mengganggu tes pencarian lain.
   const { resetRateLimit, RATE_LIMIT } = await import('../server/placesHandler.ts')
   resetRateLimit()
+  await fetch(`${BASE}/api/places`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ _resetRateLimit: true, radiusKm: 2 }),
+  }).catch(() => {})
 
   let lastStatus = 0
   let lastMessage = ''
@@ -738,6 +744,11 @@ await test('bila pencarian gagal, muncul pesan + arah ke Tambah sendiri', async 
   )
 
   resetRateLimit()
+  await fetch(`${BASE}/api/places`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ _resetRateLimit: true, radiusKm: 2 }),
+  }).catch(() => {})
 })
 
 /* ------------------------------------------------------------------ */

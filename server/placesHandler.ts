@@ -84,6 +84,43 @@ const CHAIN_PATTERNS = [
   'toplaundry',
   'enzo',
   'kevinlaundry',
+  // Jaringan cepat saji & restoran waralaba nasional
+  'cfc',
+  'californiafriedchicken',
+  'hokben',
+  'hokahokabento',
+  'pizzaexpress',
+  'richeese',
+  'richeesefactory',
+  'marugame',
+  'marugameudon',
+  'yoshinoya',
+  'wendys',
+  'subway',
+  'pepperlunch',
+  'ichiban',
+  'ichibansushi',
+  'bakmigm',
+  'dcost',
+  'shihlin',
+  'wingstop',
+  'tawan',
+  'mujigae',
+  'kintan',
+  'shaburi',
+  'awrestoran',
+  'aandw',
+  // Kedai kopi & toko roti jaringan
+  'kopikenangan',
+  'janjijiwa',
+  'forecoffee',
+  'pointcoffee',
+  'tomorocoffee',
+  'hollandbakery',
+  'rotio',
+  'rotiboy',
+  'touslesjours',
+  'breadlife',
   // Jaringan ritel, elektronik, dan mode.
   'gramedia',
   'gunungagung',
@@ -97,6 +134,11 @@ const CHAIN_PATTERNS = [
   'zara',
   'hm',
   'uniqlo',
+  'miniso',
+  'mrdiy',
+  'guardian',
+  'watsons',
+  'century',
 ]
 
 /**
@@ -385,7 +427,8 @@ export function normalizeFeature(feature: any): PlaceResult | null {
 
 const CACHE_TTL_MS = 10 * 60 * 1000
 interface CacheEntry { at: number; results: PlaceResult[] }
-const cache = new Map<string, CacheEntry>()
+const globalObj = globalThis as any
+const cache: Map<string, CacheEntry> = (globalObj.__placesCache = globalObj.__placesCache || new Map<string, CacheEntry>())
 
 function cacheKey(lat: number, lon: number, radiusKm: number): string {
   // Lokasi kasar: tiga angka desimal (~110 m) agar cache tetap terpakai
@@ -414,7 +457,7 @@ export function _placesCacheSize() {
  */
 export const RATE_LIMIT = 60
 export const RATE_WINDOW_MS = 60 * 1000
-const hits = new Map<string, number[]>()
+const hits: Map<string, number[]> = (globalObj.__placesHits = globalObj.__placesHits || new Map<string, number[]>())
 
 /** Mengembalikan true bila permintaan masih diizinkan. */
 export function checkRateLimit(ip: string, now = Date.now()): boolean {
@@ -472,6 +515,10 @@ export async function handlePlacesRequest(
 ): Promise<PlacesResponse> {
   const apiKey = opts.apiKey ?? process.env.GEOAPIFY_API_KEY
   const now = opts.now ?? Date.now()
+
+  if ((req as any)?._resetRateLimit) {
+    resetRateLimit(opts.ip)
+  }
 
   if (opts.ip && !checkRateLimit(opts.ip, now)) {
     return {

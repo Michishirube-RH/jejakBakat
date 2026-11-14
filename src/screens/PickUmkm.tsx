@@ -121,7 +121,10 @@ export function PickUmkm({ state, patch }: P) {
         return
       }
 
-      const list: PlaceResult[] = Array.isArray(data.results) ? data.results : []
+      const rawList: PlaceResult[] = Array.isArray(data.results) ? data.results : []
+      // Saring jaringan besar non-UMKM bila ada respons tersimpan dari pencarian lama
+      const NON_UMKM = /cfc|hokben|hokahokabento|kfc|mcdonald|burgerking|pizzahut|domino|starbucks|indomaret|alfamart|pizzaexpress/i
+      const list = rawList.filter((item) => !NON_UMKM.test(item.name))
       setCenterSource(data.center?.source === 'user' ? 'user' : 'default')
       setCenter(
         typeof data.center?.lat === 'number' && typeof data.center?.lon === 'number'

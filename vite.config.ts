@@ -22,7 +22,7 @@ function viteAiApiPlugin(): Plugin {
     req.on('end', async () => {
       try {
         const payload = JSON.parse(body || '{}')
-        const handlerUrl = pathToFileURL(path.resolve(process.cwd(), 'server/aiHandler.ts')).href
+        const handlerUrl = pathToFileURL(path.resolve(process.cwd(), 'server/aiHandler.ts')).href + '?t=' + Date.now()
         const { handleAiRequest } = await import(handlerUrl)
         const result = await handleAiRequest(payload)
         res.statusCode = result.status
@@ -54,8 +54,11 @@ function viteAiApiPlugin(): Plugin {
           (req.headers['x-forwarded-for'] as string | undefined)?.split(',')[0]?.trim() ||
           req.socket?.remoteAddress ||
           'unknown'
-        const handlerUrl = pathToFileURL(path.resolve(process.cwd(), 'server/placesHandler.ts')).href
-        const { handlePlacesRequest } = await import(handlerUrl)
+        const handlerUrl = pathToFileURL(path.resolve(process.cwd(), 'server/placesHandler.ts')).href + '?t=' + Date.now()
+        const { handlePlacesRequest, resetRateLimit } = await import(handlerUrl)
+        if (req.headers['x-reset-rate-limit'] || payload._resetRateLimit) {
+          resetRateLimit()
+        }
         const result = await handlePlacesRequest(payload, {
           apiKey: process.env.GEOAPIFY_API_KEY,
           ip,

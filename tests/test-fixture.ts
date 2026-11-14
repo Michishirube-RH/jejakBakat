@@ -78,6 +78,17 @@ await test('tidak ada jaringan besar dalam hasil olahan', () => {
   assert.deepEqual(chains, [], `jaringan besar lolos: ${chains.join(', ')}`)
 })
 
+await test('HokBen dan CFC tersaring sebagai jaringan besar (bukan UMKM)', () => {
+  assert.equal(isChain('Cfc ambacang padang'), true)
+  assert.equal(isChain('CFC'), true)
+  assert.equal(isChain('HokBen (japanese fast food)'), true)
+  assert.equal(isChain('Hokben'), true)
+  assert.equal(isChain('Hoka Hoka Bento'), true)
+  const names = results.map((r) => r.name.toLowerCase())
+  assert.ok(!names.some((n) => n.includes('cfc')), 'CFC masih ada di hasil olahan')
+  assert.ok(!names.some((n) => n.includes('hokben')), 'HokBen masih ada di hasil olahan')
+})
+
 await test('tidak ada duplikat nama + jalan', () => {
   const keys = results.map((r) => r.name.toLowerCase())
   const dupes = keys.filter((k, i) => keys.indexOf(k) !== i)
