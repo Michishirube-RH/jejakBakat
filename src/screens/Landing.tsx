@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react'
 import { BarChart3, Compass, Heart, Code2, Megaphone, Palette, Check } from 'lucide-react'
+import { Logo } from '../components/Logo'
 import Mentor from '../components/Mentor'
 import type { AppState } from '../lib'
 import { cx } from '../lib'
@@ -167,7 +168,10 @@ export function Welcome({ state, patch, reset }: P) {
 
       <footer className="bg-black text-white">
         <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-4 px-5 py-10 text-sm">
-          <p className="font-display text-2xl">JejakBakat</p>
+          <div className="flex items-center gap-2.5">
+            <Logo className="h-8 w-8" />
+            <p className="font-display text-2xl">Jejak<span className="text-[#a78bfa]">Bakat</span></p>
+          </div>
           <p className="text-white/70">Jawaban dan teks masalahmu dikirim ke layanan AI untuk dianalisis. Lokasi kasar dikirim ke penyedia peta hanya bila kamu mengizinkan.</p>
           {has && <button onClick={() => { if (confirm('Hapus semua jawaban dan hasil dari perangkat ini?')) reset() }} className="min-h-11 underline underline-offset-4">Hapus data saya</button>}
         </div>
