@@ -519,7 +519,93 @@ await test('laporan dampak memakai UMKM dan status izin, tanpa data bawaan', asy
 })
 
 /* ================================================================== */
-/* 6. Semua layar bersih dari nama bawaan                              */
+/* 6. Sertifikat Laporan Dampak                                        */
+/* ================================================================== */
+
+console.log('\n6. Sertifikat Laporan Dampak')
+
+await test('tombol "Lihat sertifikat" membuka sertifikat', async () => {
+  await cdp.eval(`(() => {
+    const s = JSON.parse(localStorage.getItem('jejakbakat:v2'));
+    s.screen = 'report'; s.userName = 'Rian Pratama';
+    localStorage.setItem('jejakbakat:v2', JSON.stringify(s));
+  })()`)
+  await cdp.goto(BASE)
+  await cdp.waitFor('document.body.innerText.includes("Laporan Dampak")', 30000)
+  const ok = await cdp.clickText('Lihat sertifikat')
+  assert(ok, 'tombol Lihat sertifikat tidak ada')
+  await cdp.waitFor('!!document.querySelector(\'[data-sertifikat="true"]\')', 8000)
+})
+
+await test('sertifikat memuat nama, UMKM, dan nomor yang sah', async () => {
+  // innerText mengikuti text-transform, jadi judulnya terbaca "SERTIFIKAT".
+  const t = await cdp.eval<string>(`document.querySelector('[data-sertifikat="true"]').innerText`)
+  assert(/sertifikat/i.test(t), 'judul Sertifikat tidak ada')
+  assert(/laporan dampak/i.test(t), 'subjudul Laporan Dampak tidak ada')
+  assert(t.includes('Rian Pratama'), 'nama peserta tidak tampil')
+  assert(t.includes('Warung Uji Manual'), 'nama UMKM tidak tampil')
+  assert(/JB-\d{4}-[0-9A-F]{4}-[0-9A-F]{4}/.test(t), `nomor sertifikat tidak sah: ${t}`)
+  assert(!t.includes('Bu Sari') && !t.includes('Kopi Tetangga'), 'nama bawaan muncul di sertifikat')
+})
+
+await test('nomor sertifikat stabil setelah muat ulang', async () => {
+  const ambil = `document.querySelector('[data-sertifikat="true"]').innerText.match(/JB-\\d{4}-[0-9A-F]{4}-[0-9A-F]{4}/)[0]`
+  const pertama = await cdp.eval<string>(ambil)
+  await cdp.clickText('Kembali ke laporan')
+  await cdp.waitFor('document.body.innerText.includes("Ringkasan misi")', 20000)
+  await cdp.clickText('Lihat sertifikat')
+  await cdp.waitFor('!!document.querySelector(\'[data-sertifikat="true"]\')', 8000)
+  const kedua = await cdp.eval<string>(ambil)
+  assert(pertama === kedua, `nomor berubah: ${pertama} -> ${kedua}`)
+})
+
+await test('kanvas tanda tangan tersedia untuk peserta dan penerbit', async () => {
+  const n = await cdp.eval<number>(`document.querySelectorAll('[data-tanda-tangan="true"]').length`)
+  assert(n === 2, `kanvas tanda tangan harus 2, dapat ${n}`)
+})
+
+await test('coretan mouse tersimpan dan tampil di sertifikat', async () => {
+  // Simulasi goresan: hitung rect kanvas peserta, lalu kirim pointer event.
+  const box = await cdp.eval<any>(`(() => {
+    const c = document.querySelectorAll('[data-tanda-tangan="true"]')[0];
+    c.scrollIntoView({ block: 'center' });
+    const r = c.getBoundingClientRect();
+    return { x: r.left, y: r.top, w: r.width, h: r.height };
+  })()`)
+  const titik = [
+    [0.15, 0.6], [0.3, 0.3], [0.45, 0.65], [0.6, 0.35], [0.8, 0.55],
+  ].map(([fx, fy]) => ({ x: Math.round(box.x + box.w * fx), y: Math.round(box.y + box.h * fy) }))
+  await cdp.send('Input.dispatchMouseEvent', { type: 'mousePressed', x: titik[0].x, y: titik[0].y, button: 'left', clickCount: 1 })
+  for (const p of titik.slice(1)) {
+    await cdp.send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: p.x, y: p.y, button: 'left', buttons: 1 })
+  }
+  await cdp.send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: titik.at(-1)!.x, y: titik.at(-1)!.y, button: 'left', clickCount: 1 })
+  await new Promise((r) => setTimeout(r, 500))
+
+  const tersimpan = await cdp.eval<boolean>(`(() => {
+    const s = JSON.parse(localStorage.getItem('jejakbakat:v2'));
+    return typeof s.ttdPeserta === 'string' && s.ttdPeserta.startsWith('data:image/png');
+  })()`)
+  assert(tersimpan, 'coretan tidak tersimpan di localStorage')
+
+  const tampil = await cdp.eval<number>(`document.querySelectorAll('[data-sertifikat="true"] img[alt="Tanda tangan peserta"]').length`)
+  assert(tampil === 1, 'tanda tangan peserta tidak tampil di sertifikat')
+})
+
+await test('sertifikat rapi di 390 px (tanpa scroll horizontal)', async () => {
+  const overflow = await cdp.eval<number>('document.documentElement.scrollWidth - window.innerWidth')
+  assert(overflow <= 1, `ada scroll horizontal: ${overflow}px`)
+})
+
+await test('tombol kembali mengembalikan lembar laporan', async () => {
+  await cdp.clickText('Kembali ke laporan')
+  await cdp.waitFor('document.body.innerText.includes("Ringkasan misi")', 20000)
+  const ada = await cdp.eval<boolean>('!!document.querySelector(\'[data-sertifikat="true"]\')')
+  assert(!ada, 'sertifikat masih tampil setelah kembali')
+})
+
+/* ================================================================== */
+/* 7. Semua layar bersih dari nama bawaan                              */
 /* ================================================================== */
 
 console.log('\n6. Pemeriksaan akhir')
@@ -545,10 +631,10 @@ await test('teks privasi menyebut AI dan lokasi kasar', async () => {
 })
 
 /* ================================================================== */
-/* 7. Jalur galat server (dijalankan terakhir)                          */
+/* 8. Jalur galat server (dijalankan terakhir)                          */
 /* ================================================================== */
 
-console.log('\n7. Jalur galat server')
+console.log('\n8. Jalur galat server')
 
 await test('bila pencarian gagal, muncul pesan + arah ke Tambah sendiri', async () => {
   // Memakai jalur galat nyata dari server: lewati batas RATE_LIMIT permintaan

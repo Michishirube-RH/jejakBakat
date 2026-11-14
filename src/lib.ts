@@ -37,6 +37,10 @@ export interface AppState {
   userName: string
   ownerTestimonial: string
   ownerName: string
+  /** Tanda tangan peserta pada sertifikat (data URL PNG), kosong bila belum. */
+  ttdPeserta: string
+  /** Tanda tangan penerbit pada sertifikat (data URL PNG), kosong bila belum. */
+  ttdPenerbit: string
   metricsData: Record<string, { before: string; after: string }>
   chats: Record<string, ChatMsg[]>
   /**
@@ -73,6 +77,8 @@ export const initialState: AppState = {
   userName: '',
   ownerTestimonial: '',
   ownerName: '',
+  ttdPeserta: '',
+  ttdPenerbit: '',
   metricsData: {},
   chats: {},
   fallback: {

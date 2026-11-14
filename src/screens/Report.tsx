@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { BadgeCheck, Clock, Copy, Download, Share2, Check, ShieldCheck, ShieldAlert } from 'lucide-react'
+import { Award, ArrowLeft, BadgeCheck, Clock, Copy, Download, Share2, Check, ShieldCheck, ShieldAlert } from 'lucide-react'
 import { buildImpactReport, type ImpactReportData } from '../ai/mentor'
 import { MentorSay } from '../components/Companion'
+import { Sertifikat } from '../components/Sertifikat'
 import { FallbackLabel, Page } from '../components/ui'
 import { potentials } from '../data/mockData'
 import { cx, type AppState } from '../lib'
@@ -13,6 +14,8 @@ export function Report({ state, patch }: P) {
   const [rep, setRep] = useState<ImpactReportData | null>(null)
   const [toast, setToast] = useState('')
   const [failed, setFailed] = useState(false)
+  /** true bila pengguna membuka tampilan sertifikat, bukan lembar laporan. */
+  const [lihatSertifikat, setLihatSertifikat] = useState(false)
 
   useEffect(() => {
     if (!mission) return
@@ -86,6 +89,29 @@ export function Report({ state, patch }: P) {
     } catch { /* dibatalkan */ }
   }
   const field = 'w-full rounded-full bg-white px-4 py-2 ring-1 ring-line text-ink placeholder:text-ink/60'
+
+  // Tampilan sertifikat: hanya sertifikat yang tercetak, lembar laporan
+  // disembunyikan lewat atribut data supaya aturan @media print di index.css
+  // bisa membedakan keduanya.
+  if (lihatSertifikat) {
+    return (
+      <Page narrow={false}>
+        <div className="no-print mx-auto mb-5 flex w-full max-w-[1123px] flex-wrap items-center gap-3">
+          <button className="btn-secondary" onClick={() => setLihatSertifikat(false)}>
+            <ArrowLeft size={18} strokeWidth={1.75} aria-hidden />
+            Kembali ke laporan
+          </button>
+          <p className="text-sm text-muted">Sertifikat tercetak sebagai satu halaman A4 landscape.</p>
+        </div>
+        <Sertifikat state={state} rep={rep} patch={patch} />
+        {toast && (
+          <div role="status" className="sheet fixed bottom-6 left-1/2 z-30 flex -translate-x-1/2 items-center gap-2 px-5 py-3 text-sm">
+            <Check size={16} strokeWidth={2} className="text-moss" aria-hidden />{toast}
+          </div>
+        )}
+      </Page>
+    )
+  }
 
   return (
     <Page narrow={false}>
@@ -208,6 +234,7 @@ export function Report({ state, patch }: P) {
         <button className="btn-primary" onClick={() => window.print()}><Download size={18} strokeWidth={1.75} aria-hidden />Unduh PDF</button>
         <button className="btn-secondary" onClick={copy}><Copy size={18} strokeWidth={1.75} aria-hidden />Salin untuk CV</button>
         <button className="btn-secondary" onClick={share}><Share2 size={18} strokeWidth={1.75} aria-hidden />Bagikan</button>
+        <button className="btn-secondary" onClick={() => setLihatSertifikat(true)}><Award size={18} strokeWidth={1.75} aria-hidden />Lihat sertifikat</button>
         <button className="btn-secondary" onClick={() => patch({ screen: 'workspace' })}>Kembali ke ruang kerja</button>
       </div>
       {toast && (

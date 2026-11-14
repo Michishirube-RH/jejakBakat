@@ -101,6 +101,16 @@ input[type='range']::-moz-range-thumb { width: 18px; height: 18px; border-radius
   body { background: #fff !important; }
   .no-print { display: none !important; }
   .report-sheet { border: 0 !important; border-radius: 0 !important; max-width: none !important; }
+
+  /* Sertifikat: satu halaman A4 landscape, warna latar dipertahankan. */
+  @page { size: A4 landscape; margin: 0; }
+  .cert-sheet {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    border-radius: 0 !important;
+  }
+  /* Saat sertifikat terbuka, hanya sertifikat yang ikut tercetak. */
+  body:has(.cert-sheet) .report-sheet { display: none !important; }
 }
 
 .btn-dark {

@@ -115,6 +115,12 @@ export interface ImpactReportData {
   ownerPermissionGranted: boolean
   strengthenedPotential: string
   nextSteps: string[]
+  /**
+   * Nomor sertifikat, mis. JB-2026-A7F2-9C41. Dihitung ulang dari data yang
+   * sama setiap kali, jadi selalu identik untuk laporan yang sama tanpa perlu
+   * disimpan di server.
+   */
+  nomorSertifikat: string
   /** True bila ringkasan berasal dari template lokal, bukan dari LLM. */
   usedFallback: boolean
 }
@@ -191,6 +197,27 @@ export async function buildImpactReport({
     ownerPermissionGranted: mission.ownerPermissionGranted,
     strengthenedPotential: potentialName || '',
     nextSteps: mission.roadmap.map((s) => s.title),
+    nomorSertifikat: buatNomorSertifikat(mission, new Date()),
     usedFallback,
   }
+}
+
+/**
+ * Membuat nomor sertifikat yang stabil dari data misi.
+ *
+ * Tidak disimpan di mana pun: nomor dihitung ulang tiap kali laporan dibuka,
+ * sehingga data yang sama selalu menghasilkan nomor yang sama. Tanpa server,
+ * ini satu-satunya cara agar nomornya konsisten tanpa menyimpan apa pun.
+ */
+export function buatNomorSertifikat(mission: Mission, tanggal: Date): string {
+  const tahun = tanggal.getFullYear()
+  const bahan = `${mission.id}|${mission.usaha}|${mission.lokasi}|${mission.target}|${mission.createdAt}`
+  // FNV-1a 32-bit: cukup untuk nomor tampilan, bukan untuk keamanan.
+  let h = 0x811c9dc5
+  for (let i = 0; i < bahan.length; i++) {
+    h ^= bahan.charCodeAt(i)
+    h = Math.imul(h, 0x01000193) >>> 0
+  }
+  const hex = h.toString(16).toUpperCase().padStart(8, '0')
+  return `JB-${tahun}-${hex.slice(0, 4)}-${hex.slice(4, 8)}`
 }
