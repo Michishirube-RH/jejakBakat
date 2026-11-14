@@ -94,7 +94,7 @@ export async function mentorReply(
     return { text: `Di langkah "${stepTitle}", tujuan kita adalah ${stepGoal.toLowerCase()}. Coba fokus mulai dari tugas pertama dulu ya!`, usedFallback: true }
   }
   if (q === 'oy' || q === 'halo' || q === 'hai' || q === 'tes' || q === 'p') {
-    return { text: `Halo! Yuk kita fokus lagi bantu ${biz} di langkah "${stepTitle}". Ada bagian tugas yang membuatmu ragu?`, usedFallback: true }
+    return { text: `Halo! Aku Jeje, siap mendampingimu menyelesaikan langkah ini. Ada yang bisa kubantu?`, usedFallback: true }
   }
 
   const list = mentorReplies[intent]

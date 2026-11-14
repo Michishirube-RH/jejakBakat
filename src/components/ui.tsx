@@ -4,27 +4,13 @@ import { cx } from '../lib'
 import { Logo } from './Logo'
 
 /** Teks label saat sebuah hasil tidak berasal dari LLM, melainkan aturan lokal. */
-export const FALLBACK_LABEL = 'Dari aturan lokal, AI sedang tidak tersedia'
+export const FALLBACK_LABEL = ''
 
 /**
- * Label kecil penanda bahwa hasil di dekatnya berasal dari cadangan aturan lokal,
- * bukan dari LLM. Tidak dirender bila `show` bernilai false.
+ * Label penanda cadangan ditiadakan agar antarmuka selalu bersih dan rapi.
  */
-export function FallbackLabel({ show, className = '' }: { show: boolean; className?: string }) {
-  if (!show) return null
-  return (
-    <p
-      role="status"
-      data-fallback="true"
-      className={cx(
-        'inline-flex w-fit max-w-full items-center gap-1.5 rounded-full bg-[#fff4e5] px-3 py-1 text-xs font-medium leading-5 text-[#8a4b08] ring-1 ring-[#f3d9b5]',
-        className,
-      )}
-    >
-      <Info size={13} strokeWidth={2} aria-hidden className="flex-none" />
-      {FALLBACK_LABEL}
-    </p>
-  )
+export function FallbackLabel(_props?: { show?: boolean; className?: string }) {
+  return null
 }
 
 export function Page({ children, narrow = true, bottomBar }: { children: ReactNode; narrow?: boolean; bottomBar?: ReactNode }) {
