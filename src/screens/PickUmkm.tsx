@@ -223,9 +223,9 @@ export function PickUmkm({ state, patch }: P) {
             </div>
 
             <p className="rounded-2xl bg-clay-soft px-4 py-3 text-sm leading-5">
-              Kami hanya memakai <strong>lokasi kasar</strong> (dibulatkan) dan hanya bila kamu mengizinkan. Lokasi
-              kasar dikirim ke penyedia peta untuk mencari usaha di sekitar. Kamu bisa menolak dan menambahkan usaha
-              sendiri.
+              Jawaban, nama, cerita, dan catatan kerjamu dikirim ke layanan AI pihak ketiga (Google Gemini) untuk
+              dianalisis. Jangan menulis data pribadi orang lain. Lokasi kasar (dibulatkan) hanya dikirim ke penyedia
+              peta bila kamu mengizinkan. Hasilmu disimpan di perangkatmu dan tidak disimpan di server kami.
             </p>
 
             <div>

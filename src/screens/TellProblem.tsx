@@ -266,8 +266,9 @@ export function TellProblem({ state, patch }: P) {
         )}
 
         <p className="rounded-2xl bg-clay-soft px-4 py-3 text-xs leading-5">
-          Jawaban dan teks masalah dikirim ke layanan AI untuk dianalisis. Jangan menuliskan data pribadi orang lain
-          (nomor KTP, nomor rekening, atau alamat rumah lengkap).
+          Jawaban, nama, cerita, dan catatan kerjamu dikirim ke layanan AI pihak ketiga (Google Gemini) untuk
+          dianalisis. Jangan menulis data pribadi orang lain. Lokasi kasar (dibulatkan) hanya dikirim ke penyedia peta
+          bila kamu mengizinkan. Hasilmu disimpan di perangkatmu dan tidak disimpan di server kami.
         </p>
       </section>
 
