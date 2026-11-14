@@ -146,7 +146,7 @@ export function Sertifikat({ state, rep, patch }: Props) {
   const bisaPerbesar = Math.min(1, ((wrap.current?.clientWidth ?? 1123) - 2) / 1123) < 0.9
 
   return (
-    <div className="cert-wrap flex flex-col gap-4">
+    <div className="cert-wrap mt-8 sm:mt-10 flex flex-col gap-5 sm:gap-6">
       {bisaPerbesar && (
         <div className="no-print mx-auto flex w-full max-w-[1123px] justify-end">
           <button
@@ -264,32 +264,34 @@ export function Sertifikat({ state, rep, patch }: Props) {
       </div>
 
       {/* Pengaturan tanda tangan, tidak ikut tercetak */}
-      <div className="no-print mx-auto flex w-full max-w-[1123px] flex-col gap-4 rounded-2xl bg-white p-5 ring-1 ring-line">
-        <div>
+      <div className="no-print mx-auto mt-6 sm:mt-8 flex w-full max-w-[1123px] flex-col gap-5 sm:gap-6 rounded-3xl bg-white p-6 sm:p-8 ring-1 ring-line">
+        <div className="flex flex-col gap-1.5">
           <p className="flex items-center gap-2 text-sm font-semibold">
             <Type size={15} strokeWidth={1.75} aria-hidden />
             Tanda tangan peserta
           </p>
-          <p className="mt-0.5 text-xs text-muted">Goreskan tanda tanganmu dengan mouse atau jari untuk dicantumkan di sertifikat.</p>
+          <p className="text-xs text-muted">Goreskan tanda tanganmu dengan mouse atau jari untuk dicantumkan di sertifikat.</p>
           <TandaTangan
             value={state.ttdPeserta}
             onChange={(v) => patch({ ttdPeserta: v })}
             label="Tanda tangan peserta di sini"
-            className="mt-2 max-w-xl"
+            className="mt-2.5 max-w-xl"
           />
         </div>
-        <p className="text-xs text-muted">
-          Sertifikat ini adalah penghargaan dan portofolio. Keabsahannya dapat dikonfirmasi ke UMKM yang
-          bersangkutan, tidak diverifikasi oleh sistem.
-        </p>
-        <div className="flex flex-wrap items-center gap-3">
-          <button className="btn-primary" onClick={() => window.print()}>
-            <Download size={18} strokeWidth={1.75} aria-hidden />
-            Unduh sertifikat (PDF)
-          </button>
-          <p className="text-xs text-muted">
-            Pilih <strong>Landscape</strong> dan matikan <strong>Headers and footers</strong> saat menyimpan PDF.
+        <div className="flex flex-col gap-3 pt-3 border-t border-line/60">
+          <p className="text-xs text-muted leading-relaxed">
+            Sertifikat ini adalah penghargaan dan portofolio. Keabsahannya dapat dikonfirmasi ke UMKM yang
+            bersangkutan, tidak diverifikasi oleh sistem.
           </p>
+          <div className="flex flex-wrap items-center gap-3">
+            <button className="btn-primary" onClick={() => window.print()}>
+              <Download size={18} strokeWidth={1.75} aria-hidden />
+              Unduh sertifikat (PDF)
+            </button>
+            <p className="text-xs text-muted">
+              Pilih <strong>Landscape</strong> dan matikan <strong>Headers and footers</strong> saat menyimpan PDF.
+            </p>
+          </div>
         </div>
       </div>
     </div>

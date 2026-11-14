@@ -100,35 +100,38 @@ export function Report({ state, patch }: P) {
   return (
     <Page narrow={false}>
       <div className="mx-auto w-full max-w-[1123px]">
-        <header className="no-print">
+        <header className="no-print mb-6 sm:mb-8">
           <p className="text-sm font-medium text-muted">Laporan Dampak · JejakBakat AI</p>
           <h1 className="mt-1 text-[28px] leading-[1.15] tracking-[-0.02em] md:text-[34px]">{rep.missionName}</h1>
-          <FallbackLabel show={rep.usedFallback} className="mt-2" />
+          <FallbackLabel show={rep.usedFallback} className="mt-3" />
         </header>
 
         {/* Data yang hanya bisa diisi pengguna. Tanpa ini sertifikat tidak
             akan pernah punya nama peserta. */}
-        <section className="no-print mt-4 grid gap-3 rounded-2xl bg-white p-5 ring-1 ring-line md:grid-cols-2">
-          <label className="text-sm font-semibold">Nama kamu
+        <section className="no-print grid gap-5 rounded-3xl bg-white p-6 ring-1 ring-line sm:p-8 md:grid-cols-2 md:gap-6">
+          <label className="flex flex-col gap-2 text-sm font-semibold">
+            Nama kamu
             <input
-              className={field + ' mt-1 font-normal'}
+              className={field + ' font-normal'}
               value={state.userName}
               placeholder="Contoh: Rian Pratama"
               onChange={(e) => patch({ userName: e.target.value })}
             />
           </label>
-          <label className="text-sm font-semibold">Nama pemilik usaha
+          <label className="flex flex-col gap-2 text-sm font-semibold">
+            Nama pemilik usaha
             <input
-              className={field + ' mt-1 font-normal'}
+              className={field + ' font-normal'}
               value={state.ownerName}
               placeholder="Contoh: Budi"
               onChange={(e) => patch({ ownerName: e.target.value })}
             />
           </label>
-          <label className="text-sm font-semibold md:col-span-2">Testimoni pemilik usaha
+          <label className="flex flex-col gap-2 text-sm font-semibold md:col-span-2">
+            Testimoni pemilik usaha
             <textarea
               rows={2}
-              className={field + ' mt-1 resize-none !rounded-[24px] font-normal'}
+              className={field + ' resize-none !rounded-[24px] font-normal'}
               value={state.ownerTestimonial}
               placeholder="Tulis kutipan langsung dari pemilik usaha. Boleh dikosongkan."
               onChange={(e) => patch({ ownerTestimonial: e.target.value })}
@@ -137,26 +140,28 @@ export function Report({ state, patch }: P) {
 
           {/* Status izin tetap ditampilkan: ini kejujuran yang dijaga sejak awal
               dan tidak boleh hilang hanya karena tampilannya berubah. */}
-          <div className="flex flex-wrap items-center gap-2 md:col-span-2">
-            <span className={cx(
-              'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold',
-              rep.ownerPermissionGranted ? 'bg-[#d8f5e1] text-[#0f3d26]' : 'bg-paper text-muted ring-1 ring-line',
-            )}>
+          <div className="flex flex-col gap-2.5 pt-3 md:col-span-2 border-t border-line/60">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <span className={cx(
+                'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold',
+                rep.ownerPermissionGranted ? 'bg-[#d8f5e1] text-[#0f3d26]' : 'bg-paper text-muted ring-1 ring-line',
+              )}>
+                {rep.ownerPermissionGranted
+                  ? <><ShieldCheck size={14} strokeWidth={1.75} aria-hidden />Izin pemilik: Sudah izin</>
+                  : <><ShieldAlert size={14} strokeWidth={1.75} aria-hidden />Izin pemilik: Belum dihubungi</>}
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-clay-soft px-3 py-1 text-xs font-semibold text-ink">
+                <BadgeCheck size={14} strokeWidth={1.75} aria-hidden />Diisi oleh pemilik usaha
+              </span>
+            </div>
+            <p className="text-xs text-muted leading-relaxed">
               {rep.ownerPermissionGranted
-                ? <><ShieldCheck size={14} strokeWidth={1.75} aria-hidden />Izin pemilik: Sudah izin</>
-                : <><ShieldAlert size={14} strokeWidth={1.75} aria-hidden />Izin pemilik: Belum dihubungi</>}
-            </span>
-            <span className="inline-flex items-center gap-1 rounded-full bg-clay-soft px-2.5 py-0.5 text-xs font-semibold text-ink">
-              <BadgeCheck size={14} strokeWidth={1.75} aria-hidden />Diisi oleh pemilik usaha
-            </span>
+                ? 'Pemilik sudah memberi izin sebelum misi dijalankan. Minta pemilik memeriksa sertifikat ini sebelum dibagikan.'
+                : 'Pemilik belum dihubungi atau belum memberi izin. Hubungi pemilik lebih dulu sebelum membagikan sertifikat.'}
+            </p>
           </div>
-          <p className="text-xs text-muted md:col-span-2">
-            {rep.ownerPermissionGranted
-              ? 'Pemilik sudah memberi izin sebelum misi dijalankan. Minta pemilik memeriksa sertifikat ini sebelum dibagikan.'
-              : 'Pemilik belum dihubungi atau belum memberi izin. Hubungi pemilik lebih dulu sebelum membagikan sertifikat.'}
-          </p>
           {perluNama && (
-            <p className="rounded-xl bg-[#fff4e5] px-3 py-2 text-xs text-[#8a4b08] ring-1 ring-[#f3d9b5] md:col-span-2">
+            <p className="rounded-2xl bg-[#fff4e5] px-4 py-3 text-xs leading-relaxed text-[#8a4b08] ring-1 ring-[#f3d9b5] md:col-span-2">
               Nama peserta masih kosong. Isi dulu agar sertifikat tidak menampilkan nama contoh.
             </p>
           )}
@@ -165,7 +170,7 @@ export function Report({ state, patch }: P) {
 
       <Sertifikat state={state} rep={rep} patch={patch} />
 
-      <div className="no-print mx-auto mt-6 flex w-full max-w-[1123px] flex-wrap justify-center gap-3">
+      <div className="no-print mx-auto mt-8 sm:mt-10 mb-8 flex w-full max-w-[1123px] flex-wrap justify-center gap-3.5">
         <button className="btn-secondary" onClick={copy}><Copy size={18} strokeWidth={1.75} aria-hidden />Salin untuk CV</button>
         <button className="btn-secondary" onClick={share}><Share2 size={18} strokeWidth={1.75} aria-hidden />Bagikan</button>
         <button className="btn-secondary" onClick={() => patch({ screen: 'workspace' })}>Kembali ke ruang kerja</button>
