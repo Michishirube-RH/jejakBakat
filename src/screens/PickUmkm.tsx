@@ -38,15 +38,15 @@ export function PickUmkm({ state, patch }: P) {
   const abortRef = useRef<AbortController | null>(null)
   /** Menandai apakah pengguna sudah menyetujui pemakaian lokasi. */
   const [locationAllowed, setLocationAllowed] = useState(false)
-  /**
-   * Sisa detik sebelum batas pencarian per IP mengendur lagi.
-   * 0 berarti tidak sedang dibatasi.
-   */
+  /** Sisa detik sebelum batas pencarian per IP mengendur lagi. 0 berarti tidak sedang dibatasi. */
   const [waitSec, setWaitSec] = useState(0)
   /** Titik pusat pencarian terakhir, dipakai menghitung jarak tiap usaha. */
   const [center, setCenter] = useState<{ lat: number; lon: number } | null>(null)
   /** true bila pengguna membuka daftar lengkap di balik 3 kartu teratas. */
   const [showAll, setShowAll] = useState(false)
+  /** true bila pencarian radius baru sedang berjalan di latar belakang tanpa menghapus kartu lama. */
+  const [isUpdating, setIsUpdating] = useState(false)
+  const debounceTimer = useRef<any>(null)
 
   // ---- Tab manual ----
   const [name, setName] = useState('')
@@ -62,14 +62,19 @@ export function PickUmkm({ state, patch }: P) {
   /* Pencarian                                                        */
   /* ---------------------------------------------------------------- */
 
-  const search = async (opts: { withLocation: boolean; radius: number }) => {
+  const search = async (opts: { withLocation: boolean; radius: number; keepResults?: boolean }) => {
     abortRef.current?.abort()
     const controller = new AbortController()
     abortRef.current = controller
 
-    setStatus(opts.withLocation ? 'locating' : 'loading')
+    const shouldKeep = Boolean(opts.keepResults && results.length > 0)
+    if (shouldKeep) {
+      setIsUpdating(true)
+    } else {
+      setStatus(opts.withLocation ? 'locating' : 'loading')
+      setResults([])
+    }
     setMessage('')
-    setResults([])
     setPickedId(null)
     setWaitSec(0)
 
@@ -87,7 +92,9 @@ export function PickUmkm({ state, patch }: P) {
     }
     if (controller.signal.aborted) return
 
-    setStatus('loading')
+    if (!shouldKeep) {
+      setStatus('loading')
+    }
     try {
       const res = await fetch('/api/places', {
         method: 'POST',
@@ -100,6 +107,7 @@ export function PickUmkm({ state, patch }: P) {
       })
 
       const data = await res.json().catch(() => ({}))
+      setIsUpdating(false)
 
       if (res.status === 503) {
         setStatus('nokey')
@@ -140,6 +148,7 @@ export function PickUmkm({ state, patch }: P) {
       }
     } catch (err: any) {
       if (err?.name === 'AbortError') return
+      setIsUpdating(false)
       setStatus('error')
       setMessage('Tidak bisa menghubungi layanan peta. Periksa koneksimu atau tambahkan usaha sendiri.')
     }
@@ -148,7 +157,10 @@ export function PickUmkm({ state, patch }: P) {
   // Muat pertama kali tanpa meminta lokasi: pakai pusat default.
   useEffect(() => {
     search({ withLocation: false, radius: radiusKm })
-    return () => abortRef.current?.abort()
+    return () => {
+      abortRef.current?.abort()
+      if (debounceTimer.current) clearTimeout(debounceTimer.current)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -173,7 +185,15 @@ export function PickUmkm({ state, patch }: P) {
 
   const ubahRadius = (r: number) => {
     setRadiusKm(r)
-    search({ withLocation: locationAllowed, radius: r })
+    if (debounceTimer.current) clearTimeout(debounceTimer.current)
+    debounceTimer.current = setTimeout(() => {
+      search({ withLocation: locationAllowed, radius: r, keepResults: true })
+    }, 280)
+  }
+
+  const commitRadius = (r: number) => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current)
+    search({ withLocation: locationAllowed, radius: r, keepResults: true })
   }
 
   const choose = (r: PlaceResult) => {
@@ -268,7 +288,7 @@ export function PickUmkm({ state, patch }: P) {
               <button
                 className="btn-secondary !min-h-11 !px-4"
                 onClick={() => search({ withLocation: true, radius: radiusKm })}
-                disabled={status === 'loading' || status === 'locating'}
+                disabled={status === 'loading' || status === 'locating' || isUpdating}
               >
                 <LocateFixed size={18} strokeWidth={1.75} />
                 Pakai lokasiku
@@ -289,7 +309,15 @@ export function PickUmkm({ state, patch }: P) {
             <div>
               <div className="flex items-center justify-between">
                 <label htmlFor="radius" className="text-sm font-semibold">Radius pencarian</label>
-                <span className="text-sm text-muted" aria-live="polite">{radiusKm} km</span>
+                <div className="flex items-center gap-2">
+                  {isUpdating && (
+                    <span className="flex items-center gap-1.5 text-xs text-[#7c4dff]" aria-live="polite">
+                      <Loader2 size={13} className="animate-spin" aria-hidden />
+                      Memperbarui...
+                    </span>
+                  )}
+                  <span className="text-sm font-medium text-ink" aria-live="polite">{radiusKm} km</span>
+                </div>
               </div>
               <input
                 id="radius"
@@ -299,6 +327,7 @@ export function PickUmkm({ state, patch }: P) {
                 step={1}
                 value={radiusKm}
                 onChange={(e) => ubahRadius(Number(e.target.value))}
+                onPointerUp={(e) => commitRadius(Number(e.currentTarget.value))}
                 className="mt-2 w-full accent-[#7c4dff]"
               />
               <div className="flex justify-between text-xs text-muted"><span>1 km</span><span>5 km</span></div>
@@ -364,7 +393,7 @@ export function PickUmkm({ state, patch }: P) {
                 </p>
                 <p className="text-xs text-muted">Diurutkan dari yang paling dekat</p>
               </div>
-              <ul className="mt-3 flex flex-col gap-3">
+              <ul className={cx('mt-3 flex flex-col gap-3 transition-opacity duration-200', isUpdating && 'opacity-60 pointer-events-none')}>
                 {teratas.map((r) => (
                   <li key={r.id}>
                     <UsahaCard place={r} picked={pickedId === r.id} center={center} onPick={() => choose(r)} />
