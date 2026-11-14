@@ -95,14 +95,89 @@ const CHAIN_PATTERNS = [
 /** Kategori yang selalu dibuang. */
 const EXCLUDED_CATEGORIES = ['commercial.shopping_mall', 'commercial.supermarket']
 
+/**
+ * Kategori Geoapify yang bukan usaha yang cocok untuk misi UMKM mahasiswa.
+ * Dipakai sebagai cadangan bila `datasource.raw` tidak menyertakan tag OSM.
+ */
+const EXCLUDED_CATEGORY_PREFIXES = [
+  'service.beauty',
+  'service.vehicle',
+  'commercial.elektronics',
+  'commercial.hardware',
+  'commercial.houseware',
+  'commercial.pharmacy',
+  'commercial.health_and_beauty',
+  'commercial.medical',
+  'commercial.fuel',
+  'commercial.energy',
+  'commercial.vehicle',
+  'commercial.financial',
+  'commercial.real_estate',
+  'commercial.insurance',
+  'commercial.education',
+  'commercial.bank',
+  'commercial.laundry',
+  'commercial.dry_cleaning',
+]
+
+/**
+ * Jenis usaha yang tidak cocok untuk misi UMKM mahasiswa (dealer mobil,
+ * bengkel, salon, toko elektronik/komputer). Data OpenStreetMap di Indonesia
+ * banyak berisi entri seperti ini di area komersial, dan akan mengacaukan
+ * daftar pilihan. Dicocokkan persis pada nilai `raw.shop`/`raw.amenity`.
+ */
+const EXCLUDED_RAW_SHOPS = new Set([
+  'car',
+  'car_repair',
+  'car_parts',
+  'motorcycle',
+  'motorcycle_repair',
+  'motorcycle_parts',
+  'bicycle',
+  'hairdresser',
+  'beauty',
+  'electronics',
+  'computer',
+  'mobile_phone',
+  'hardware',
+  'doityourself',
+  'laundry',
+  'dry_cleaning',
+  'travel_agency',
+  'estate_agent',
+  'bank',
+  'money_lender',
+  'fuel',
+  'pharmacy',
+  'chemist',
+  'medical_supply',
+  'optician',
+  'hearing_aids',
+  'funeral_directors',
+  'caravan',
+  'tyres',
+  'paint',
+  'glaziery',
+])
+
+function isExcludedByRawType(props: Record<string, any>): boolean {
+  const raw = props.datasource?.raw || {}
+  const shop = String(raw.shop || '').toLowerCase()
+  const amenity = String(raw.amenity || '').toLowerCase()
+  const craft = String(raw.craft || '').toLowerCase()
+  return EXCLUDED_RAW_SHOPS.has(shop) || EXCLUDED_RAW_SHOPS.has(amenity) || EXCLUDED_RAW_SHOPS.has(craft)
+}
+
 function isExcludedByCategory(props: Record<string, any>): boolean {
   const cats = [props.categories, props.category]
     .flat()
     .filter(Boolean)
     .map((c: string) => String(c).toLowerCase())
 
-  return cats.some((c) =>
-    EXCLUDED_CATEGORIES.some((ex) => c === ex || c.startsWith(ex + '.')),
+  return cats.some(
+    (c) =>
+      EXCLUDED_CATEGORIES.some((ex) => c === ex || c.startsWith(ex + '.')) ||
+      EXCLUDED_CATEGORY_PREFIXES.some((ex) => c === ex || c.startsWith(ex + '.')),
   )
 }
 
@@ -136,18 +211,26 @@ export function mapCategoryToJenis(...categories: (string | undefined | null)[])
   if (list.some((c) => c.startsWith('catering.restaurant') || c.startsWith('catering.fast_food')))
     return 'Warung makan'
   if (list.some((c) => c.startsWith('catering.cafe'))) return 'Kedai kopi'
+  // Pedagang makanan kecil (es krim, camilan jalanan) tetap warung makan.
+  if (has('ice_cream') || has('catering.food_court') || has('catering.food_and_drink'))
+    return 'Warung makan'
   if (list.some((c) => c.startsWith('commercial.convenience') || c.startsWith('commercial.greengrocer')))
     return 'Toko kelontong'
   if (list.some((c) => c.startsWith('catering.catering'))) return 'Jasa katering'
   if (list.some((c) => c.startsWith('commercial.clothing') || c.startsWith('commercial.art_and_craft')))
     return 'Toko pakaian/kriya'
 
-  // Cadangan dari datasource mentah OpenStreetMap.
-  if (has('shop=bakery') || has('shop=confectionery')) return 'Kue dan roti'
-  if (has('amenity=restaurant') || has('amenity=fast_food')) return 'Warung makan'
-  if (has('amenity=cafe')) return 'Kedai kopi'
-  if (has('shop=convenience') || has('shop=greengrocer')) return 'Toko kelontong'
-  if (has('shop=clothes') || has('shop=art')) return 'Toko pakaian/kriya'
+  // Cadangan dari datasource mentah OpenStreetMap. Dicocokkan per nilai
+  // persis agar `shop=computer` tidak tertangkap oleh aturan `shop=convenience`.
+  const rawValues = list.filter((c) => c.includes('='))
+  const rawIs = (...vals: string[]) => rawValues.some((c) => vals.includes(c))
+  if (rawIs('shop=bakery', 'shop=confectionery', 'shop=pastry')) return 'Kue dan roti'
+  if (rawIs('amenity=restaurant', 'amenity=fast_food', 'amenity=food_court')) return 'Warung makan'
+  if (rawIs('amenity=cafe', 'amenity=coffee_shop')) return 'Kedai kopi'
+  if (rawIs('amenity=ice_cream')) return 'Warung makan'
+  if (rawIs('shop=convenience', 'shop=greengrocer', 'shop=kiosk', 'shop=general')) return 'Toko kelontong'
+  if (rawIs('shop=clothes', 'shop=boutique', 'shop=fashion', 'shop=art', 'shop=craft', 'shop=gift'))
+    return 'Toko pakaian/kriya'
 
   return 'Lainnya'
 }
@@ -169,9 +252,19 @@ export function categoryLabelFor(jenis: JenisUsaha): string {
 
 /** Menyusun alamat ringkas dari properti Geoapify. */
 function buildAddress(props: Record<string, any>): string {
+  const name = String(props.name || '').trim().toLowerCase()
+  const street = String(props.street || '').trim()
+  const line1 = String(props.address_line1 || '').trim()
+  // Geoapify kadang mengisi address_line1 dengan nama tempat itu sendiri.
+  // Bila begitu, pakai `street` supaya alamat tidak mengulang nama usaha.
+  const first = !line1 || line1.toLowerCase() === name ? street : line1
+
   const parts = [
-    props.address_line1 || props.street,
-    props.address_line2,
+    first
+      ? props.housenumber
+        ? `${first} No. ${props.housenumber}`
+        : first
+      : '',
     props.suburb || props.district,
     props.city || props.town || props.village,
   ]
@@ -179,9 +272,25 @@ function buildAddress(props: Record<string, any>): string {
     .map((p: any) => String(p).trim())
     .filter((p, i, arr) => p && arr.indexOf(p) === i)
 
-  if (parts.length > 0) return parts.join(', ').slice(0, 160)
+  if (parts.length > 0) {
+    const joined = parts.join(', ')
+    if (props.state && !joined.includes(String(props.state))) {
+      return `${joined}, ${props.state}`.slice(0, 160)
+    }
+    return joined.slice(0, 160)
+  }
   if (props.formatted) return String(props.formatted).slice(0, 160)
   return ''
+}
+
+/** Skor kelengkapan data, dipakai memilih entri terbaik saat ada duplikat. */
+function richness(item: PlaceResult): number {
+  return (
+    (item.address ? 2 : 0) +
+    (item.phone ? 3 : 0) +
+    (item.openingHours ? 2 : 0) +
+    (item.lat != null && item.lon != null ? 1 : 0)
+  )
 }
 
 /**
@@ -199,6 +308,7 @@ export function normalizeFeature(feature: any): PlaceResult | null {
   if (props.brand || props['brand:wikidata'] || props['brand:wikipedia']) return null
   if (isChain(name)) return null
   if (isExcludedByCategory(props)) return null
+  if (isExcludedByRawType(props)) return null
 
   const rawShop = props.datasource?.raw?.shop
   const rawAmenity = props.datasource?.raw?.amenity
@@ -369,16 +479,23 @@ export async function handlePlacesRequest(
     const data = await res.json()
     const features: any[] = Array.isArray(data?.features) ? data.features : []
 
-    const seen = new Set<string>()
-    const results: PlaceResult[] = []
+    const seen = new Map<string, PlaceResult>()
     for (const f of features) {
       const item = normalizeFeature(f)
       if (!item) continue
-      const dedupeKey = `${item.name.toLowerCase()}|${item.address.toLowerCase()}`
-      if (seen.has(dedupeKey)) continue
-      seen.add(dedupeKey)
-      results.push(item)
+      // Kunci dedupe memakai nama + jalan saja (tanpa nomor rumah), karena
+      // OpenStreetMap sering menyimpan satu tempat dua kali dengan nomor
+      // rumah berbeda. Yang lebih lengkap informasinya dipertahankan.
+      const street = String(f?.properties?.street || '').toLowerCase().trim()
+      const dedupeKey = `${item.name.toLowerCase()}|${street}`
+      const prev = seen.get(dedupeKey)
+      if (!prev) {
+        seen.set(dedupeKey, item)
+        continue
+      }
+      if (richness(item) > richness(prev)) seen.set(dedupeKey, item)
     }
+    const results = [...seen.values()]
 
     results.sort((a, b) => a.name.localeCompare(b.name, 'id'))
 
