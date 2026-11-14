@@ -1,0 +1,135 @@
+.mt-root {
+  --mt-fur-top: var(--color-violet, #7C5CFF);
+  --mt-fur-bottom: var(--color-indigo-deep, #1E1A4D);
+  --mt-skin: #FFE2B8;
+  --mt-skin-shade: #F2C48E;
+  --mt-scarf: var(--color-teal, #2EC4B6);
+  --mt-cheek: var(--color-rose, #FF7AA8);
+  --mt-ink: var(--color-midnight, #14112B);
+  --mt-light: var(--color-mist, #F3F1FF);
+  display: inline-block; line-height: 0; position: relative;
+}
+@supports (color: color-mix(in srgb, red, blue)) {
+  .mt-root {
+    --mt-skin: color-mix(in srgb, var(--color-amber, #FFB84D) 30%, white);
+    --mt-skin-shade: color-mix(in srgb, var(--color-amber, #FFB84D) 55%, white);
+  }
+}
+.mt-root svg { overflow: visible; display: block; }
+.mt-root[role='button'] { cursor: pointer; }
+.mt-root[role='button']:focus-visible { outline: 3px solid var(--mt-scarf); outline-offset: 4px; border-radius: 24px; }
+
+/* Setiap bagian punya pivot sendiri */
+.mt-root g[class*='mt-'] { transform-box: view-box; }
+.mt-figure { transform-origin: 120px 284px; }
+.mt-body { transform-origin: 120px 262px; }
+.mt-head { transform-origin: 120px 160px; }
+.mt-ear-l { transform-origin: 62px 116px; }
+.mt-ear-r { transform-origin: 178px 116px; }
+.mt-arm-l { transform-origin: 68px 168px; transform: rotate(8deg); }
+.mt-arm-r { transform-origin: 172px 168px; transform: rotate(-8deg); }
+.mt-foot-l { transform-origin: 96px 258px; }
+.mt-foot-r { transform-origin: 144px 258px; }
+.mt-scarf { transform-origin: 120px 176px; }
+.mt-tail-l { transform-origin: 118px 192px; }
+.mt-tail-r { transform-origin: 122px 192px; }
+.mt-eye-l { transform-origin: 100px 108px; }
+.mt-eye-r { transform-origin: 140px 108px; }
+.mt-mouth-open { transform-origin: 120px 134px; }
+
+.mt-fx, .mt-think-arm, .mt-happy-face, .mt-open-mouth, .mt-dots { display: none; }
+.mt-thinking .mt-think-arm, .mt-thinking .mt-dots { display: inline; }
+.mt-thinking .mt-arm-r { display: none; }
+.mt-happy .mt-happy-face, .mt-celebrate .mt-happy-face { display: inline; }
+.mt-happy .mt-eyes, .mt-celebrate .mt-eyes, .mt-happy .mt-calm-mouth, .mt-celebrate .mt-calm-mouth, .mt-talking .mt-calm-mouth { display: none; }
+.mt-talking .mt-open-mouth { display: inline; }
+.mt-celebrate .mt-fx { display: inline; }
+
+/* Pose statis (juga dipakai saat gerak dimatikan) */
+.mt-thinking .mt-head { transform: rotate(-6deg); }
+.mt-thinking .mt-pupil { transform: translate(3px, -3px); }
+.mt-happy .mt-arm-l, .mt-celebrate .mt-arm-l { transform: rotate(145deg); }
+.mt-happy .mt-arm-r, .mt-celebrate .mt-arm-r { transform: rotate(-145deg); }
+.mt-talking .mt-arm-r { transform: rotate(-30deg); }
+
+/* Animasi */
+@keyframes mt-breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.035, 1.05); } }
+@keyframes mt-tilt { 0%, 100% { transform: rotate(-4deg) translateY(0); } 50% { transform: rotate(4deg) translateY(-3px); } }
+@keyframes mt-blink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(0.08); } }
+@keyframes mt-twitch { 0%, 80%, 100% { transform: rotate(0); } 84% { transform: rotate(-22deg); } 89% { transform: rotate(8deg); } 94% { transform: rotate(-10deg); } }
+@keyframes mt-sway-l { 0%, 100% { transform: rotate(8deg); } 50% { transform: rotate(-12deg); } }
+@keyframes mt-sway-r { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(12deg); } }
+@keyframes mt-bob { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-6px) rotate(3deg); } }
+@keyframes mt-talk { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+@keyframes mt-lift { 0%, 100% { transform: rotate(-35deg); } 50% { transform: rotate(-60deg); } }
+@keyframes mt-think-tilt { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(-8deg) translateY(-1px); } }
+@keyframes mt-dot { 0%, 100% { opacity: 0.25; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.15); } }
+@keyframes mt-jump { 0% { transform: scale(1.07, 0.92); } 18% { transform: translateY(-4px) scale(0.96, 1.06); } 45% { transform: translateY(-48px) scale(0.95, 1.07); } 72% { transform: translateY(0) scale(1.08, 0.92); } 100% { transform: scale(1, 1); } }
+@keyframes mt-swing-l { 0%, 100% { transform: rotate(130deg); } 50% { transform: rotate(160deg); } }
+@keyframes mt-swing-r { 0%, 100% { transform: rotate(-130deg); } 50% { transform: rotate(-160deg); } }
+@keyframes mt-flap-l { 0%, 100% { transform: rotate(16deg); } 50% { transform: rotate(-20deg); } }
+@keyframes mt-flap-r { 0%, 100% { transform: rotate(-16deg); } 50% { transform: rotate(20deg); } }
+@keyframes mt-arm-l-idle { 0%, 100% { transform: rotate(8deg); } 50% { transform: rotate(16deg); } }
+@keyframes mt-arm-r-idle { 0%, 100% { transform: rotate(-8deg); } 50% { transform: rotate(-16deg); } }
+@keyframes mt-sway-body { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
+@keyframes mt-wave { 0%, 100% { transform: rotate(-135deg); } 50% { transform: rotate(-170deg); } }
+@keyframes mt-hop { 0%, 60%, 100% { transform: translateY(0) scale(1, 1); } 15% { transform: translateY(0) scale(1.04, 0.95); } 35% { transform: translateY(-14px) scale(0.98, 1.03); } }
+@keyframes mt-kick { 0%, 100% { transform: translateY(0); } 45% { transform: translateY(-6px) rotate(8deg); } }
+@keyframes mt-spark { 0% { opacity: 0; transform: translate(0, 0) scale(0); } 30% { opacity: 1; transform: translate(calc(var(--dx) * 0.6), calc(var(--dy) * 0.6)) scale(1); } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.4) rotate(90deg); } }
+@keyframes mt-pop { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.15); opacity: 1; } 80% { transform: scale(0.96); } 100% { transform: scale(1); } }
+@keyframes mt-tap { 0% { transform: scale(1); } 20% { transform: scale(1.1, 0.86); } 50% { transform: translateY(-14px) scale(0.95, 1.06); } 80% { transform: scale(1.04, 0.95); } 100% { transform: scale(1); } }
+@keyframes mt-wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-16deg); } 75% { transform: rotate(12deg); } }
+
+.mt-entrance { animation: mt-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.mt-tap { animation: mt-tap 0.55s ease-out; }
+.mt-tap .mt-ear-l, .mt-tap .mt-ear-r { animation: mt-wiggle 0.5s ease-in-out 2 !important; }
+
+.mt-idle .mt-body { animation: mt-breathe 3.2s ease-in-out infinite; }
+.mt-idle .mt-figure { animation: mt-sway-body 5s ease-in-out infinite; }
+.mt-idle .mt-arm-l { animation: mt-arm-l-idle 3.2s ease-in-out infinite; }
+.mt-idle .mt-arm-r { animation: mt-arm-r-idle 3.2s ease-in-out infinite; }
+.mt-idle .mt-head { animation: mt-tilt 6s ease-in-out infinite; }
+.mt-idle .mt-eye-l, .mt-idle .mt-eye-r, .mt-talking .mt-eye-l, .mt-talking .mt-eye-r, .mt-thinking .mt-eye-l, .mt-thinking .mt-eye-r { animation: mt-blink 5s infinite; }
+.mt-idle .mt-ear-r { animation: mt-twitch 9s infinite; }
+.mt-idle .mt-tail-l, .mt-talking .mt-tail-l, .mt-thinking .mt-tail-l { animation: mt-sway-l 3s ease-in-out infinite; }
+.mt-idle .mt-tail-r, .mt-talking .mt-tail-r, .mt-thinking .mt-tail-r { animation: mt-sway-r 3s ease-in-out infinite; }
+
+.mt-talking .mt-body { animation: mt-breathe 3s ease-in-out infinite; }
+.mt-talking .mt-head { animation: mt-bob 0.6s ease-in-out infinite; }
+.mt-talking .mt-mouth-open { animation: mt-talk 0.32s ease-in-out infinite; }
+.mt-talking .mt-arm-r { animation: mt-lift 0.9s ease-in-out infinite; }
+
+.mt-thinking .mt-head { animation: mt-think-tilt 3s ease-in-out infinite; }
+.mt-thinking .mt-body { animation: mt-breathe 4s ease-in-out infinite; }
+.mt-thinking .mt-dot { animation: mt-dot 1.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.mt-thinking .mt-dot:nth-child(2) { animation-delay: 0.2s; }
+.mt-thinking .mt-dot:nth-child(3) { animation-delay: 0.4s; }
+
+.mt-happy .mt-figure { animation: mt-jump 0.9s ease-in-out infinite; }
+.mt-happy .mt-arm-l { animation: mt-swing-l 0.9s ease-in-out infinite; }
+.mt-happy .mt-arm-r { animation: mt-swing-r 0.9s ease-in-out infinite; }
+.mt-happy .mt-foot-l, .mt-happy .mt-foot-r, .mt-celebrate .mt-foot-l, .mt-celebrate .mt-foot-r { animation: mt-kick 0.9s ease-in-out infinite; }
+.mt-happy .mt-tail-l, .mt-happy .mt-tail-r { animation: mt-flap-l 0.45s ease-in-out infinite; }
+
+.mt-celebrate .mt-figure { animation: mt-jump 0.55s ease-in-out infinite; }
+.mt-celebrate .mt-arm-l { animation: mt-swing-l 0.3s ease-in-out infinite; }
+.mt-celebrate .mt-arm-r { animation: mt-swing-r 0.3s ease-in-out infinite; }
+.mt-celebrate .mt-foot-l, .mt-celebrate .mt-foot-r { animation-duration: 0.55s; }
+.mt-celebrate .mt-tail-l { animation: mt-flap-l 0.25s ease-in-out infinite; }
+.mt-celebrate .mt-tail-r { animation: mt-flap-r 0.25s ease-in-out infinite; }
+.mt-spark { animation: mt-spark 1.4s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+
+/* Menyapa: melambai dan sedikit memantul (layar perkenalan) */
+.mt-greet .mt-arm-r { transform: rotate(-150deg); animation: mt-wave 0.7s ease-in-out infinite; }
+.mt-greet .mt-arm-l { animation: mt-arm-l-idle 3s ease-in-out infinite; }
+.mt-greet .mt-figure { animation: mt-hop 2.4s ease-in-out infinite; }
+.mt-greet .mt-body { animation: mt-breathe 3s ease-in-out infinite; }
+.mt-greet .mt-head { animation: mt-tilt 3s ease-in-out infinite; }
+.mt-greet .mt-eye-l, .mt-greet .mt-eye-r { animation: mt-blink 4s infinite; }
+.mt-greet .mt-ear-r { animation: mt-twitch 6s infinite; }
+.mt-greet .mt-tail-l { animation: mt-sway-l 2s ease-in-out infinite; }
+.mt-greet .mt-tail-r { animation: mt-sway-r 2s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mt-root, .mt-root * { animation: none !important; transition: none !important; }
+}
