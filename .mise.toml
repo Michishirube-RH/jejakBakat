@@ -1,3 +1,8 @@
 [tools]
 node = "22"
 "npm:pnpm" = "10.34.3"
+
+# Dipakai Vercel saat build/deploy. Nomor versi mayor saja agar Vercel
+# memilih rilis Node 22 terbaru yang tersedia.
+[env]
+VERCEL_NODE_VERSION = "22"
