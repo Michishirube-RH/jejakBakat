@@ -46,51 +46,106 @@ export const RADIUS_MAX_KM = 5
 const LIMIT = 50
 const CATEGORIES = 'catering,commercial'
 
-/** Jaringan besar yang tidak boleh muncul: skala nasional, bukan UMKM. */
+/**
+ * Jaringan besar yang tidak boleh muncul: skala nasional atau internasional,
+ * bukan UMKM. Ditulis tanpa spasi/tanda baca karena pembandingnya sudah
+ * dinormalkan lebih dulu (huruf kecil, hanya a-z dan 0-9).
+ *
+ * Catatan: jangan menambahkan kata umum seperti "toko mas" atau "musik" —
+ * toko emas dan toko musik lokal justru sasaran yang sah.
+ */
 const CHAIN_PATTERNS = [
   'indomaret',
   'alfamart',
   'alfamidi',
   'alfaria',
   'minimarket',
-  'circle k',
-  'circle-k',
+  'circlek',
   'lawson',
   'familymart',
-  'family mart',
-  '7-eleven',
-  '7 eleven',
-  'seven eleven',
+  '7eleven',
+  'seveneleven',
   'superindo',
   'hypermart',
   'carrefour',
   'transmart',
-  'trans mart',
   'ramayana',
   'matahari',
   'alfacart',
   'indogrosir',
-  'yogya group',
-  'hari hari',
-  'hari-hari',
-  'tip top',
+  'yogyagroup',
+  'harihari',
+  'tiptop',
   'jco',
   'dunkin',
   'starbucks',
   'kfc',
   'mcdonald',
-  'burger king',
-  'pizza hut',
+  'burgerking',
+  'pizzahut',
   'domino',
   'mixue',
   'chatime',
   'richie',
   'breadtalk',
-  'sari roti',
-  'top laundry',
+  'sariroti',
+  'toplaundry',
   'enzo',
-  'kevin laundry',
+  'kevinlaundry',
+  // Jaringan ritel, elektronik, dan mode.
+  'gramedia',
+  'gunungagung',
+  'eiger',
+  'erafone',
+  'informa',
+  'acehardware',
+  'gokana',
+  'solaria',
+  'planetsports',
+  'zara',
+  'hm',
+  'uniqlo',
 ]
+
+/**
+ * Menormalkan nama untuk perbandingan jaringan: huruf kecil, tanpa tanda
+ * baca, tanpa spasi. "McDonald's" -> "mcdonalds", "H&M" -> "hm",
+ * "7-Eleven" -> "7eleven".
+ */
+function normalizeName(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]/g, '')
+}
+
+const CHAIN_PATTERN_SET = new Set(CHAIN_PATTERNS.map(normalizeName))
+
+/** "H&M" -> "hm" terlalu pendek untuk pencocokan substring yang aman. */
+const MIN_SUBSTRING_LEN = 3
+
+/**
+ * Mengembalikan true bila nama cocok dengan jaringan besar.
+ *
+ * Pencocokan memakai dua cara agar nama bervariasi tetap tertangkap
+ * ("KFC Amacang", "Restoran McDonald's", "Gramedia Padang"):
+ * - nama ternormalisasi sama persis dengan pola, atau
+ * - nama ternormalisasi mengawali/mengakhiri/mengandung pola yang cukup
+ *   panjang. Pola pendek ("hm") hanya dicocokkan persis agar tidak
+ *   salah menandai nama lokal.
+ */
+export function isChain(name: string): boolean {
+  const n = normalizeName(name)
+  if (!n) return false
+  if (CHAIN_PATTERN_SET.has(n)) return true
+
+  for (const p of CHAIN_PATTERN_SET) {
+    if (p.length < MIN_SUBSTRING_LEN) continue
+    if (n.startsWith(p) || n.endsWith(p) || n.includes(p)) return true
+  }
+  return false
+}
 
 /** Kategori yang selalu dibuang. */
 const EXCLUDED_CATEGORIES = ['commercial.shopping_mall', 'commercial.supermarket']
@@ -179,11 +234,6 @@ function isExcludedByCategory(props: Record<string, any>): boolean {
       EXCLUDED_CATEGORIES.some((ex) => c === ex || c.startsWith(ex + '.')) ||
       EXCLUDED_CATEGORY_PREFIXES.some((ex) => c === ex || c.startsWith(ex + '.')),
   )
-}
-
-function isChain(name: string): boolean {
-  const n = name.toLowerCase()
-  return CHAIN_PATTERNS.some((p) => n.includes(p))
 }
 
 /**

@@ -1,0 +1,1314 @@
+{
+  "_comment": "Respons mentah Geoapify Places API, Padang radius 2 km, kategori catering,commercial. Dipakai sebagai fixture tes. Sudah dibersihkan: tanpa apiKey, tanpa place_id, tanpa koordinat. Jangan menambahkan kunci API atau data pribadi ke file ini.",
+  "features":
+[
+    {
+        "properties":  {
+                           "name":  "Restoran Jalanan Cinto Bundo (Street Restaurant only evening)",
+                           "categories":  [
+                                              "catering",
+                                              "catering.restaurant",
+                                              "catering.restaurant.indonesian"
+                                          ],
+                           "street":  "Jalan Pemuda , olo , Padang Barat 25117",
+                           "housenumber":  null,
+                           "address_line1":  "Restoran Jalanan Cinto Bundo (Street Restaurant only evening)",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  "restaurant",
+                                                          "shop":  null
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "HONDA",
+                           "categories":  [
+                                              "commercial",
+                                              "service",
+                                              "service.vehicle",
+                                              "service.vehicle.repair",
+                                              "service.vehicle.repair.motorcycle"
+                                          ],
+                           "street":  "Jalan Pemuda , olo , Padang Barat 25117",
+                           "housenumber":  null,
+                           "address_line1":  "HONDA",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  "HONDA",
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "motorcycle_repair"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "YAMAHA",
+                           "categories":  [
+                                              "commercial",
+                                              "service",
+                                              "service.vehicle",
+                                              "service.vehicle.repair",
+                                              "service.vehicle.repair.motorcycle"
+                                          ],
+                           "street":  "Jalan Damar , Olo , Padang Barat 25117",
+                           "housenumber":  null,
+                           "address_line1":  "YAMAHA",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  "YAMAHA",
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "motorcycle_repair"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Toko Buku Gramedia",
+                           "categories":  [
+                                              "building",
+                                              "building.commercial",
+                                              "commercial",
+                                              "commercial.books"
+                                          ],
+                           "street":  "Jalan Damar , Olo , Padang Barat 25117",
+                           "housenumber":  null,
+                           "address_line1":  "Toko Buku Gramedia",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "books"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Plaza Andalas",
+                           "categories":  [
+                                              "building",
+                                              "building.commercial",
+                                              "commercial",
+                                              "commercial.shopping_mall"
+                                          ],
+                           "street":  "Jalan Pemuda , olo , Padang Barat 25117",
+                           "housenumber":  null,
+                           "address_line1":  "Plaza Andalas",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "mall"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Robinson Supermarket",
+                           "categories":  [
+                                              "commercial",
+                                              "commercial.supermarket"
+                                          ],
+                           "street":  "Jalan Pemuda , olo , Padang Barat 25117",
+                           "housenumber":  null,
+                           "address_line1":  "Robinson Supermarket",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "supermarket"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "KFC",
+                           "categories":  [
+                                              "catering",
+                                              "catering.fast_food"
+                                          ],
+                           "street":  "Jalan Pemuda , olo , Padang Barat 25117",
+                           "housenumber":  null,
+                           "address_line1":  "KFC",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  "KFC",
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  "fast_food",
+                                                          "shop":  null
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "EIGER",
+                           "categories":  [
+                                              "commercial",
+                                              "commercial.outdoor_and_sport"
+                                          ],
+                           "street":  "Jalan Ahmad Yani",
+                           "housenumber":  null,
+                           "address_line1":  "EIGER",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  "Mo-Su 09:00-21:00",
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "outdoor"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Toko DEWI INDAH Padang",
+                           "categories":  [
+                                              "commercial",
+                                              "commercial.clothing",
+                                              "commercial.clothing.clothes"
+                                          ],
+                           "street":  "Jalan Pasar Raya 2",
+                           "housenumber":  null,
+                           "address_line1":  "Toko DEWI INDAH Padang",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  "+6275121101",
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "clothes"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Toko baju grosir",
+                           "categories":  [
+                                              "commercial",
+                                              "commercial.clothing",
+                                              "commercial.clothing.clothes"
+                                          ],
+                           "street":  "Jalan Pasar Raya 2",
+                           "housenumber":  null,
+                           "address_line1":  "Toko baju grosir",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "clothes"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Honda Hayati",
+                           "categories":  [
+                                              "commercial",
+                                              "commercial.vehicle"
+                                          ],
+                           "street":  "Jalan Pemuda , olo , Padang Barat 25117",
+                           "housenumber":  null,
+                           "address_line1":  "Honda Hayati",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "motorcycle"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "RM Mutiara Malam",
+                           "categories":  [
+                                              "catering",
+                                              "catering.restaurant"
+                                          ],
+                           "street":  "Jalan Permindo",
+                           "housenumber":  null,
+                           "address_line1":  "RM Mutiara Malam",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  "restaurant",
+                                                          "shop":  null
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Pusat handuk",
+                           "categories":  [
+                                              "commercial",
+                                              "commercial.clothing",
+                                              "commercial.clothing.clothes"
+                                          ],
+                           "street":  "Jalan Rohana Kudus",
+                           "housenumber":  null,
+                           "address_line1":  "Pusat handuk",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "clothes"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Kubang",
+                           "categories":  [
+                                              "catering",
+                                              "catering.restaurant"
+                                          ],
+                           "street":  "Jalan M. Yamin",
+                           "housenumber":  null,
+                           "address_line1":  "Kubang",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  "restaurant",
+                                                          "shop":  null
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Kubang Hayuda Indian restaurant",
+                           "categories":  [
+                                              "catering",
+                                              "catering.restaurant",
+                                              "catering.restaurant.indian"
+                                          ],
+                           "street":  "Jalan M. Yamin",
+                           "housenumber":  null,
+                           "address_line1":  "Kubang Hayuda Indian restaurant",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  "restaurant",
+                                                          "shop":  null
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Kios Jagung bakar zuhri",
+                           "categories":  [
+                                              "catering",
+                                              "catering.ice_cream"
+                                          ],
+                           "street":  "Jalan Samudra",
+                           "housenumber":  null,
+                           "address_line1":  "Kios Jagung bakar zuhri",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  "ice_cream",
+                                                          "shop":  null
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "KFC",
+                           "categories":  [
+                                              "building",
+                                              "building.catering",
+                                              "catering",
+                                              "catering.fast_food"
+                                          ],
+                           "street":  "Jalan Patimura",
+                           "housenumber":  null,
+                           "address_line1":  "KFC",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  "KFC",
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  "fast_food",
+                                                          "shop":  null
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Toko Digital Elektronik - Mikasa Sport",
+                           "categories":  [
+                                              "building",
+                                              "building.commercial",
+                                              "commercial",
+                                              "commercial.elektronics"
+                                          ],
+                           "street":  "Jalan Permindo",
+                           "housenumber":  null,
+                           "address_line1":  "Toko Digital Elektronik - Mikasa Sport",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "electronics"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Rumah Makan Tanpa Nama",
+                           "categories":  [
+                                              "building",
+                                              "building.catering",
+                                              "catering",
+                                              "catering.restaurant"
+                                          ],
+                           "street":  "Jalan Rohana Kudus",
+                           "housenumber":  null,
+                           "address_line1":  "Rumah Makan Tanpa Nama",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  "restaurant",
+                                                          "shop":  null
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Rumah Makab Ikan Bakar Fuji",
+                           "categories":  [
+                                              "catering",
+                                              "catering.restaurant"
+                                          ],
+                           "street":  "Jalan Purus 1",
+                           "housenumber":  null,
+                           "address_line1":  "Rumah Makab Ikan Bakar Fuji",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  "restaurant",
+                                                          "shop":  null
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "PizzaExpress",
+                           "categories":  [
+                                              "building",
+                                              "building.catering",
+                                              "catering",
+                                              "catering.restaurant",
+                                              "catering.restaurant.pizza",
+                                              "wheelchair",
+                                              "wheelchair.yes"
+                                          ],
+                           "street":  "Jalan Diponegoro",
+                           "housenumber":  null,
+                           "address_line1":  "PizzaExpress",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  "PizzaExpress",
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  "restaurant",
+                                                          "shop":  null
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Toko mas murni",
+                           "categories":  [
+                                              "commercial",
+                                              "commercial.jewelry"
+                                          ],
+                           "street":  "Jalan Pasar Raya",
+                           "housenumber":  null,
+                           "address_line1":  "Toko mas murni",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "jewelry"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Toko mas jenewa",
+                           "categories":  [
+                                              "commercial",
+                                              "commercial.gift_and_souvenir"
+                                          ],
+                           "street":  "Jalan Pasar Raya",
+                           "housenumber":  null,
+                           "address_line1":  "Toko mas jenewa",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "gift"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Makan Pangsit",
+                           "categories":  [
+                                              "catering",
+                                              "catering.cafe"
+                                          ],
+                           "street":  "Jalan M. Yamin",
+                           "housenumber":  null,
+                           "address_line1":  "Makan Pangsit",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  "cafe",
+                                                          "shop":  null
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Toko Mas Singgalang Indah (Irfan M.Noer)",
+                           "categories":  [
+                                              "commercial",
+                                              "commercial.jewelry"
+                                          ],
+                           "street":  "Jalan Pasar Raya",
+                           "housenumber":  "1A",
+                           "address_line1":  "Toko Mas Singgalang Indah (Irfan M.Noer)",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  "Mo-Fr 09:00-17:00",
+                           "phone":  "+62 751 8951785",
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "jewelry"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Indomaret",
+                           "categories":  [
+                                              "commercial",
+                                              "commercial.convenience"
+                                          ],
+                           "street":  "Jalan Diponegoro",
+                           "housenumber":  null,
+                           "address_line1":  "Indomaret",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  "08:30-12:30,15:30-20:00",
+                           "phone":  null,
+                           "brand":  "Indomaret",
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "convenience"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Pasar Fase 7",
+                           "categories":  [
+                                              "commercial",
+                                              "commercial.supermarket"
+                                          ],
+                           "street":  "Jalan Sandang Pangan",
+                           "housenumber":  null,
+                           "address_line1":  "Pasar Fase 7",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "supermarket"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Rumah Makan Simpang Raya",
+                           "categories":  [
+                                              "catering",
+                                              "catering.restaurant",
+                                              "catering.restaurant.asian"
+                                          ],
+                           "street":  "Jalan Bundo Kanduang",
+                           "housenumber":  null,
+                           "address_line1":  "Rumah Makan Simpang Raya",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  "restaurant",
+                                                          "shop":  null
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Imbio Coffee",
+                           "categories":  [
+                                              "catering",
+                                              "catering.cafe"
+                                          ],
+                           "street":  "Jalan Samudra",
+                           "housenumber":  null,
+                           "address_line1":  "Imbio Coffee",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  "cafe",
+                                                          "shop":  null
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Rumah Makan Ikan Bakar",
+                           "categories":  [
+                                              "building",
+                                              "building.catering",
+                                              "catering",
+                                              "catering.restaurant"
+                                          ],
+                           "street":  "Jalan Samudra",
+                           "housenumber":  null,
+                           "address_line1":  "Rumah Makan Ikan Bakar",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  "restaurant",
+                                                          "shop":  null
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Shoeroom KIA Motor",
+                           "categories":  [
+                                              "building",
+                                              "building.commercial",
+                                              "commercial",
+                                              "commercial.vehicle"
+                                          ],
+                           "street":  "Jalan Veteran",
+                           "housenumber":  null,
+                           "address_line1":  "Shoeroom KIA Motor",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "car"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Erny",
+                           "categories":  [
+                                              "building",
+                                              "building.commercial",
+                                              "commercial",
+                                              "commercial.clothing",
+                                              "commercial.clothing.clothes"
+                                          ],
+                           "street":  "Jalan Veteran",
+                           "housenumber":  null,
+                           "address_line1":  "Erny",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "boutique"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Sinar Mulia Komputer",
+                           "categories":  [
+                                              "building",
+                                              "building.commercial",
+                                              "building.office",
+                                              "commercial",
+                                              "commercial.elektronics"
+                                          ],
+                           "street":  "Jalan Diponegoro",
+                           "housenumber":  null,
+                           "address_line1":  "Sinar Mulia Komputer",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "computer"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Sinar Mulia Komputer",
+                           "categories":  [
+                                              "commercial",
+                                              "commercial.elektronics"
+                                          ],
+                           "street":  "Jalan Diponegoro",
+                           "housenumber":  "17",
+                           "address_line1":  "Sinar Mulia Komputer",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  "+62 75-124446",
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "computer"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Cfc ambacang padang",
+                           "categories":  [
+                                              "catering",
+                                              "catering.fast_food"
+                                          ],
+                           "street":  "Jalan Gereja",
+                           "housenumber":  null,
+                           "address_line1":  "Cfc ambacang padang",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  "fast_food",
+                                                          "shop":  null
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Toko Bahan Kue Sampurna",
+                           "categories":  [
+                                              "commercial"
+                                          ],
+                           "street":  "Jalan Hiligoo",
+                           "housenumber":  "34",
+                           "address_line1":  "Toko Bahan Kue Sampurna",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  "Mo-Sa 10:15-13:00,14:35-18:00",
+                           "phone":  null,
+                           "brand":  "Colatta; Toffieco; Satelit; Trans; JBD; JPS; Bobatee; Tulip; Itpin; Diamond; Indomilk",
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "bakery_supplies,milkshake_supplies"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Warung Lotek",
+                           "categories":  [
+                                              "commercial",
+                                              "commercial.kiosk"
+                                          ],
+                           "street":  "Gang Purus III",
+                           "housenumber":  null,
+                           "address_line1":  "Warung Lotek",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "kiosk"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Quin Musik",
+                           "categories":  [
+                                              "building",
+                                              "building.catering",
+                                              "catering",
+                                              "catering.pub"
+                                          ],
+                           "street":  "Jalan Diponegoro",
+                           "housenumber":  null,
+                           "address_line1":  "Quin Musik",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  "pub",
+                                                          "shop":  null
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Old Schol Cafe",
+                           "categories":  [
+                                              "catering",
+                                              "catering.cafe"
+                                          ],
+                           "street":  "Jalan Purus 3",
+                           "housenumber":  null,
+                           "address_line1":  "Old Schol Cafe",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  "cafe",
+                                                          "shop":  null
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Showroom Hino",
+                           "categories":  [
+                                              "building",
+                                              "building.commercial",
+                                              "commercial",
+                                              "commercial.vehicle"
+                                          ],
+                           "street":  "Jalan Purus 3",
+                           "housenumber":  null,
+                           "address_line1":  "Showroom Hino",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "car"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "HokBen (japanese fast food)",
+                           "categories":  [
+                                              "catering",
+                                              "catering.fast_food"
+                                          ],
+                           "street":  "Jalan Bagindo Aziz Chan",
+                           "housenumber":  null,
+                           "address_line1":  "HokBen (japanese fast food)",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  "fast_food",
+                                                          "shop":  null
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Showroom Ford",
+                           "categories":  [
+                                              "building",
+                                              "building.commercial",
+                                              "commercial",
+                                              "commercial.vehicle"
+                                          ],
+                           "street":  "Jalan Purus 3",
+                           "housenumber":  null,
+                           "address_line1":  "Showroom Ford",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "car"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Showroom Hino",
+                           "categories":  [
+                                              "building",
+                                              "building.commercial",
+                                              "commercial",
+                                              "commercial.vehicle"
+                                          ],
+                           "street":  "Jalan Purus 3",
+                           "housenumber":  null,
+                           "address_line1":  "Showroom Hino",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "car"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Restoran Safari",
+                           "categories":  [
+                                              "building",
+                                              "building.catering",
+                                              "catering",
+                                              "catering.restaurant"
+                                          ],
+                           "street":  "Jalan Samudra",
+                           "housenumber":  null,
+                           "address_line1":  "Restoran Safari",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  "restaurant",
+                                                          "shop":  null
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Restoran Safari",
+                           "categories":  [
+                                              "building",
+                                              "building.catering",
+                                              "catering",
+                                              "catering.restaurant"
+                                          ],
+                           "street":  "Jalan Samudra",
+                           "housenumber":  null,
+                           "address_line1":  "Restoran Safari",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  "restaurant",
+                                                          "shop":  null
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Mulia Electronik",
+                           "categories":  [
+                                              "building",
+                                              "building.commercial",
+                                              "commercial",
+                                              "commercial.elektronics"
+                                          ],
+                           "street":  "Jalan Diponegoro",
+                           "housenumber":  null,
+                           "address_line1":  "Mulia Electronik",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "electronics"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Showroom Hino",
+                           "categories":  [
+                                              "building",
+                                              "building.commercial",
+                                              "commercial",
+                                              "commercial.vehicle"
+                                          ],
+                           "street":  "Jalan Purus 3",
+                           "housenumber":  null,
+                           "address_line1":  "Showroom Hino",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "car"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Dhany",
+                           "categories":  [
+                                              "building",
+                                              "building.commercial",
+                                              "commercial",
+                                              "service",
+                                              "service.cleaning",
+                                              "service.cleaning.laundry"
+                                          ],
+                           "street":  "Jalan Purus 3",
+                           "housenumber":  null,
+                           "address_line1":  "Dhany",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "laundry"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Kios baru",
+                           "categories":  [
+                                              "commercial",
+                                              "commercial.kiosk"
+                                          ],
+                           "street":  "Gang III RW 01 RT IV",
+                           "housenumber":  null,
+                           "address_line1":  "Kios baru",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "kiosk"
+                                                      }
+                                          }
+                       }
+    },
+    {
+        "properties":  {
+                           "name":  "Bali Haritage",
+                           "categories":  [
+                                              "commercial",
+                                              "service",
+                                              "service.beauty",
+                                              "service.beauty.hairdresser"
+                                          ],
+                           "street":  "Jalan Veteran",
+                           "housenumber":  null,
+                           "address_line1":  "Bali Haritage",
+                           "city":  "Padang",
+                           "state":  "Sumatera Barat",
+                           "opening_hours":  null,
+                           "phone":  null,
+                           "brand":  null,
+                           "brand:wikidata":  null,
+                           "datasource":  {
+                                              "raw":  {
+                                                          "craft":  null,
+                                                          "amenity":  null,
+                                                          "shop":  "hairdresser"
+                                                      }
+                                          }
+                       }
+    }
+]
+}
