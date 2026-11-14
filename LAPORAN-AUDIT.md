@@ -1,4 +1,20 @@
 # LAPORAN AUDIT — JejakBakat AI
+
+> [!IMPORTANT]
+> **DOKUMEN INI SUDAH KEDALUWARSA — HANYA UNTUK CATATAN SEJARAH.**
+>
+> Audit ini dibuat pada 14 November 2026 terhadap snapshot kode **sebelum**
+> pengerjaan ulang alur misi. Temuannya — terutama tentang tiga misi UMKM
+> bawaan ("Warung Bu Sari", "Kopi Tetangga", "Batik Ibu Lastri"), data metrik
+> dan testimoni contoh, serta klaim bahwa tidak ada panggilan LLM — **sudah
+> tidak berlaku** pada kode saat ini.
+>
+> Kondisi terkini: pengguna memilih UMKM sendiri (cari di sekitar lewat
+> Geoapify atau tambah manual), menceritakan masalahnya, lalu LLM merancang
+> misi 3 hari. Tiga misi bawaan sudah dihapus dari seluruh kode, dan tidak ada
+> nama usaha, angka dampak, atau testimoni bawaan yang tampil di layar mana
+> pun. Lihat `README`/riwayat commit untuk keadaan sekarang.
+
 **Tanggal audit:** 14 November 2026  
 **Auditor:** AI (Antigravity / Claude Sonnet 4.6 Thinking)  
 **Versi kode:** snapshot 14 Nov 2026, 14:09 WIB (tidak ada git history)  

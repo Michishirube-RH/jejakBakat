@@ -8,7 +8,10 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "node server.js",
-    "format": "oxfmt"
+    "format": "oxfmt",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types tests/run-all.ts",
+    "test:unit": "node --experimental-strip-types tests/test-stage-a.ts && node --experimental-strip-types tests/test-fixture.ts"
   },
   "dependencies": {
     "lucide-react": "^1.72.0",
